@@ -1,0 +1,152 @@
+/* NAVBAR */
+
+.premium-navbar {
+  background: #101319;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* LOGO */
+
+.brand {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.white {
+  color: #fff;
+}
+
+.green {
+  color: #9be52a;
+  font-weight: 700;
+}
+
+/* MENU */
+
+.nav-link-custom {
+  position: relative;
+  color: #b8bcc5;
+  text-decoration: none;
+  font-size: 14px;
+  letter-spacing: 1px;
+  font-weight: 500;
+  transition: 0.35s;
+}
+
+.nav-link-custom:hover {
+  color: white;
+}
+
+.nav-link-custom::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+  width: 0;
+  height: 2px;
+  background: #9be52a;
+  transition: 0.35s;
+}
+
+.nav-link-custom:hover::after {
+  width: 100%;
+}
+
+/* BUTTON */
+
+.assess-btn {
+  background: #ff5b45;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 22px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  transition: 0.35s;
+}
+
+.assess-btn:hover {
+  background: #ff4028;
+  transform: translateY(-3px);
+  box-shadow: 0 15px 25px rgba(255, 91, 69, 0.35);
+}
+
+/* PREMIUM TOGGLE */
+
+.menu-toggle {
+  width: 52px;
+  height: 52px;
+  border: none;
+  border-radius: 50%;
+  background: #191d24;
+  color: white;
+  font-size: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+/* MOBILE */
+
+.premium-menu {
+  width: 320px !important;
+  background: #101319;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 36px;
+}
+
+.mobile-logo {
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.mobile-link {
+  color: #b8bcc5;
+  text-decoration: none;
+  padding: 18px 0;
+  font-size: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  transition: 0.35s;
+}
+
+.mobile-link:hover {
+  color: #9be52a;
+  padding-left: 10px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 992px) {
+  .brand {
+    font-size: 22px;
+  }
+
+  .menu-toggle {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+@media (max-width: 576px) {
+  .brand {
+    font-size: 18px;
+  }
+
+  .mobile-logo {
+    font-size: 22px;
+  }
+
+  .mobile-link {
+    font-size: 17px;
+  }
+}

@@ -1,0 +1,90 @@
+.carousel-media {
+  height: 100vh;
+  object-fit: cover;
+}
+
+.carousel-item {
+  position: relative;
+}
+
+.carousel-indicators button {
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: 50%;
+}
+
+@media (max-width: 768px) {
+  .carousel-media {
+    height: 60vh;
+  }
+}
+.hero-caption{
+    left:8%;
+    right:auto;
+    top:50%;
+    transform:translateY(-50%);
+    text-align:left;
+    max-width:650px;
+}
+
+.hero-caption h5{
+    color:#9BE52A;
+    font-weight:600;
+    margin-bottom:15px;
+}
+
+.hero-caption h1{
+    font-size:60px;
+    font-weight:800;
+    line-height:1.2;
+    color:#fff;
+}
+
+.hero-caption h1 span{
+    color:#9BE52A;
+}
+
+.hero-caption p{
+    color:#ddd;
+    font-size:18px;
+    margin:25px 0;
+    line-height:1.8;
+}
+
+.hero-buttons{
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+.btn-primary-custom{
+    background:#ff5b45;
+    border:none;
+    padding:14px 35px;
+    font-weight:600;
+}
+
+.btn-primary-custom:hover{
+    background:#ff4328;
+}
+
+@media(max-width:768px){
+
+.hero-caption{
+    left:20px;
+    right:20px;
+    top:50%;
+}
+
+.hero-caption h1{
+    font-size:34px;
+}
+
+.hero-caption p{
+    font-size:15px;
+}
+
+.hero-buttons{
+    justify-content:flex-start;
+}
+}

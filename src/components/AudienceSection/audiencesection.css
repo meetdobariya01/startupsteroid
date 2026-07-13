@@ -1,0 +1,27 @@
+.audience-section {
+  background: #ecece4;
+}
+
+.audience-title {
+  /* color: #8d003e; */
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 800;
+}
+
+.audience-text {
+  color: #333;
+  line-height: 1.8;
+}
+
+.investors-button {
+  background: #ff5b45;
+  border: none;
+}
+.investors-button :hover{
+    background: #dd7464;
+}
+
+.secondary-btn {
+  color: #8d003e;
+  border-color: #8d003e;
+}

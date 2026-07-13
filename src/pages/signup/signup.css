@@ -1,0 +1,41 @@
+.login-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #060b17, #222c42);
+}
+
+.login-card {
+  border-radius: 24px;
+}
+
+.left-panel {
+  background: linear-gradient(135deg, #060b17, #222c42);
+  align-items: center;
+  justify-content: center;
+}
+
+.rocket {
+  font-size: 5rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+.field-icon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #060b17;
+}
+
+.login-btn {
+  background: #060b17;
+  border: none;
+}
+.login-btn :hover{
+    background: red;
+}
+
+@keyframes float {
+  50% {
+    transform: translateY(-12px);
+  }
+}

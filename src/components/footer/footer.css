@@ -1,0 +1,26 @@
+.footer {
+  background: #101319;
+  color: #fff;
+}
+
+.footer a {
+  display: block;
+  color: #fff;
+  text-decoration: none;
+  margin-bottom: 0.75rem;
+}
+
+.footer-logo {
+  max-width: 220px;
+}
+
+.footer-text {
+  max-width: 260px;
+  line-height: 1.8;
+}
+
+.social-icons svg {
+  font-size: 1.5rem;
+  margin-left: 1rem;
+  cursor: pointer;
+}

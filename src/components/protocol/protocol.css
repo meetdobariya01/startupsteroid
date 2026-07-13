@@ -1,0 +1,31 @@
+.protocol-section {
+  background: #ecece4;
+  color: #101820;
+}
+
+.protocol-tag,
+.step-no {
+  color: #ff4d2d;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+}
+
+.protocol-title {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.protocol-subtitle {
+  color: #666;
+  max-width: 500px;
+}
+
+.protocol-step {
+  padding: 1rem 1.25rem;
+  border-left: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.protocol-step p {
+  color: #5d5d5d;
+}

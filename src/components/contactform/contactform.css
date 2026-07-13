@@ -1,0 +1,8 @@
+.contact-section {
+  background: #f8f9fa;
+}
+
+.contact-section .form-control {
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+}

@@ -1,0 +1,41 @@
+.hero-section {
+  background: #060b17;
+  color: #fff;
+  /* min-height: 100vh; */
+}
+
+.hero-tag {
+  color: #d4ff2a;
+  letter-spacing: 2px;
+  font-size: 0.8rem;
+}
+
+.hero-title {
+  font-size: 70px;
+  font-weight: 900;
+  line-height: 0.95;
+}
+
+.hero-title span {
+  color: #d4ff2a;
+}
+
+.hero-text {
+  color: #b6bcc8;
+  max-width: 600px;
+  margin-top: 1.5rem;
+}
+
+.info-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+@media (max-width:720px){
+.hero-title{
+    font-size: 50px;
+}
+}
+
+

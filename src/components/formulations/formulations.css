@@ -1,0 +1,27 @@
+.formulations {
+  background: #090f1b;
+  color: #fff;
+}
+
+.section-tag {
+  color: #d8ff36;
+  letter-spacing: 2px;
+  font-size: 0.75rem;
+}
+
+.dose-card {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.15);
+  transition: all 0.3s ease;
+}
+
+.dose-card:hover {
+  transform: translateY(-6px);
+  border-color: #d8ff36;
+}
+
+.explore-link {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+}
