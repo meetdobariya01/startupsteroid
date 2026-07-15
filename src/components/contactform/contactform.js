@@ -14,7 +14,7 @@ const Contactform = () => {
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
               >
-                <h2 className="fw-bold mb-4">Get in Touch</h2>
+                <h2 className="fw-bold mb-4 text-light">Get in Touch</h2>
 
                 <Form>
                   <Form.Group className="mb-3">
@@ -41,7 +41,7 @@ const Contactform = () => {
                     />
                   </Form.Group>
 
-                  <Button variant="outline-dark" size="lg">
+                  <Button variant="outline-light" size="lg">
                     Send Message
                   </Button>
                 </Form>
@@ -50,7 +50,7 @@ const Contactform = () => {
 
             <Col lg={6}>
               <motion.img
-                src="./images/contact.jpg"
+                src="./images/contact.png"
                 alt="Contact Us"
                 className="img-fluid rounded-4 shadow"
                 initial={{ opacity: 0, x: 30 }}

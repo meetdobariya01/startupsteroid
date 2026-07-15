@@ -1,0 +1,40 @@
+.start-here-section {
+  background: #070c16;
+  color: #fff;
+}
+
+.section-tag {
+  color: #d6ff33;
+  letter-spacing: 3px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  font-weight: 900;
+  line-height: 1;
+  max-width: 1200px;
+}
+
+.hero-subtitle {
+  color: #9ea6b5;
+  font-size: 1.2rem;
+  max-width: 700px;
+}
+.pricing-section {
+  background: #f8f9fa;
+}
+
+.pricing-card {
+  border-radius: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.pricing-card:hover {
+  transform: translateY(-10px);
+}
+
+.featured {
+  border: 2px solid #0d6efd;
+}

@@ -1,5 +1,6 @@
 .audience-section {
-  background: #ecece4;
+  background: #060b17;
+  color: #fff;
 }
 
 .audience-title {
@@ -9,7 +10,7 @@
 }
 
 .audience-text {
-  color: #333;
+  /* color: #333; */
   line-height: 1.8;
 }
 

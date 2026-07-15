@@ -3,15 +3,16 @@ import { Navbar, Container, Nav, Button, Offcanvas } from "react-bootstrap";
 import { motion } from "framer-motion";
 import { HiOutlineMenuAlt3, HiMenu, HiOutlineUserCircle } from "react-icons/hi";
 import { IoClose } from "react-icons/io5";
+import { NavLink } from "react-router-dom";
 import "./header.css";
 
 const menu = [
-  "MATCHMAKING",
-  "DEAL FLOW",
-  "READYSCORE AI",
-  "DEMO DAY",
-  "SPV",
-  "FINISHING SCHOOL",
+  { name: "MATCHMAKING", path: "/matchmaking" },
+  { name: "DEAL FLOW", path: "/dealflow" },
+  { name: "READYSCORE AI", path: "/readyscore" },
+  { name: "DEMO DAY", path: "/demo-day" },
+  { name: "SPV", path: "/spv" },
+  { name: "FINISHING SCHOOL", path: "/finishing-school" },
 ];
 
 const Header = () => {
@@ -35,23 +36,28 @@ const Header = () => {
 
           <Nav className="mx-auto d-none d-lg-flex align-items-center gap-4">
             {menu.map((item, index) => (
-              <motion.a
-                key={item}
-                href="/"
-                className="nav-link-custom"
+              <motion.div
+                key={item.path}
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                transition={{
-                  delay: index * 0.08,
-                }}
+                transition={{ delay: index * 0.08 }}
               >
-                {item}
-              </motion.a>
+                <NavLink
+                  to={item.path}
+                  className={({ isActive }) =>
+                    isActive ? "nav-link-custom active-nav" : "nav-link-custom"
+                  }
+                >
+                  {item.name}
+                </NavLink>
+              </motion.div>
             ))}
           </Nav>
 
           <div className="d-none d-lg-block">
-            <Button className="assess-btn">GET ASSESSED</Button>
+            <Button as={NavLink} to="/assessed" className="assess-btn ">
+              GET ASSESSED
+            </Button>
           </div>
           <a href="/login" className="ms-3 text-decoration-none text-white">
             <HiOutlineUserCircle size={32} />
@@ -96,31 +102,29 @@ const Header = () => {
             />
           </Navbar.Brand>
 
-          <Nav className="flex-column mt-5">
+          <Nav className="flex-column mt-5 lh-lg">
             {menu.map((item, index) => (
-              <motion.a
-                href="/"
-                key={item}
-                className="mobile-link"
-                initial={{
-                  x: 60,
-                  opacity: 0,
-                }}
-                animate={{
-                  x: 0,
-                  opacity: 1,
-                }}
-                transition={{
-                  delay: index * 0.08,
-                }}
-                onClick={() => setShow(false)}
+              <motion.div
+                key={item.path}
+                initial={{ x: 60, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: index * 0.08 }}
               >
-                {item}
-              </motion.a>
+                <NavLink
+                  to={item.path}
+                  className={({ isActive }) =>
+                    isActive ? "mobile-link active-mobile-link" : "mobile-link"
+                  }
+                  onClick={() => setShow(false)}
+                >
+                  {item.name}
+                </NavLink>
+              </motion.div>
             ))}
 
-            <Button className="assess-btn mt-4">GET ASSESSED</Button>
-            
+            <Button as={NavLink} to="/assessed" className="assess-btn ">
+              GET ASSESSED
+            </Button>
           </Nav>
         </Offcanvas.Body>
       </Offcanvas>

@@ -6,7 +6,7 @@ import './audiencesection.css'
 const Audiencesection = () => {
   return (
     <div>
-      <section className="audience-section py-5">
+      <section className="audience-section py-5 text-white">
         <Container className="text-center">
           <motion.h2
             className="audience-title mb-4"
@@ -36,7 +36,7 @@ const Audiencesection = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
           >
-            <Button className="px-5 py-3" variant="outline-dark">Investors</Button>
+            <Button className="px-5 py-3" variant="outline-light">Investors</Button>
             <Button
               variant="outline-danger"
               className="px-5 py-3 secondary-btn"
