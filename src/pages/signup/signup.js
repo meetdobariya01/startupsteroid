@@ -16,10 +16,8 @@ const Signup = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   
-  // API URL
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
   
-  // Form state
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -28,7 +26,6 @@ const Signup = () => {
     confirmPassword: ""
   });
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -39,7 +36,6 @@ const Signup = () => {
     setSuccess("");
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -47,7 +43,7 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      console.log('Sending request to:', `${API_URL}/api/auth/signup`);
+      // console.log('Sending request to:', `${API_URL}/api/auth/signup`);
       
       const response = await axios.post(
         `${API_URL}/api/auth/signup`,
@@ -60,7 +56,7 @@ const Signup = () => {
         }
       );
 
-      console.log('Response:', response.data);
+      // console.log('Response:', response.data);
 
       if (response.data.success) {
         setSuccess("Account created successfully! Redirecting to login...");
@@ -86,15 +82,12 @@ const Signup = () => {
       console.error('Error details:', error);
       
       if (error.response) {
-        // Server responded with error
         console.log('Server error:', error.response.data);
         setError(error.response.data.message || "Signup failed");
       } else if (error.request) {
-        // Request made but no response
         console.log('No response from server');
         setError("Cannot connect to server. Please make sure the backend is running on port 5000.");
       } else {
-        // Other errors
         console.log('Other error:', error.message);
         setError("An error occurred. Please try again.");
       }
@@ -141,7 +134,7 @@ const Signup = () => {
                     <Form.Group className="mb-3 position-relative">
                       <FaUser className="field-icon" />
                       <Form.Control 
-                        placeholder="Username" 
+                        placeholder="Username"
                         className="ps-5"
                         name="username"
                         value={formData.username}
@@ -154,9 +147,9 @@ const Signup = () => {
                     <Form.Group className="mb-3 position-relative">
                       <FaEnvelope className="field-icon" />
                       <Form.Control 
-                        placeholder="Email" 
+                        placeholder="Email"
                         className="ps-5"
-                        type="email"
+                        type="text"  // Changed from "email" to "text" to match login
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
@@ -168,7 +161,7 @@ const Signup = () => {
                     <Form.Group className="mb-3 position-relative">
                       <FaPhone className="field-icon" />
                       <Form.Control 
-                        placeholder="Mobile" 
+                        placeholder="Mobile"
                         className="ps-5"
                         type="tel"
                         name="mobile"

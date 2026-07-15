@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
+import { Container, Row, Col, Card, Form } from "react-bootstrap";
 import { motion } from "framer-motion";
 import { FaUser, FaLock } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -14,10 +14,11 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [errors, setErrors] = useState({});
   
   // Form state
   const [formData, setFormData] = useState({
-    email: "", // Now this can be username or email
+    username: "",
     password: ""
   });
 
@@ -29,24 +30,45 @@ const Login = () => {
       [name]: value
     }));
     setError("");
+    setErrors({});
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Clear previous errors
     setError("");
+    setErrors({});
     setLoading(true);
 
+    // Client-side validation
+    if (!formData.username.trim()) {
+      setError("Please enter username or email");
+      setLoading(false);
+      return;
+    }
+    if (!formData.password) {
+      setError("Please enter your password");
+      setLoading(false);
+      return;
+    }
+
     try {
-      // Send login request to backend
+      console.log('📝 Sending login request:', {
+        email: formData.username,
+        password: '******'
+      });
+
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/auth/login`,
         {
-          email: formData.email, // Sends whatever user types
+          email: formData.username,
           password: formData.password
         }
       );
+
+      // console.log('✅ Login response:', response.data);
 
       if (response.data.success) {
         localStorage.setItem("token", response.data.token);
@@ -54,10 +76,25 @@ const Login = () => {
         navigate("/dashboard");
       }
     } catch (error) {
+      console.error('❌ Login error:', error);
+      
       if (error.response) {
-        setError(error.response.data.message || "Login failed");
+        // Server responded with error
+        // console.log('📄 Error response:', error.response.data);
+        
+        if (error.response.data.errors) {
+          // Validation errors
+          const fieldErrors = {};
+          error.response.data.errors.forEach(err => {
+            fieldErrors[err.field] = err.message;
+          });
+          setErrors(fieldErrors);
+          setError("Please fix the errors below");
+        } else {
+          setError(error.response.data.message || "Login failed");
+        }
       } else if (error.request) {
-        setError("No response from server. Please check your connection.");
+        setError("Cannot connect to server. Please check your connection.");
       } else {
         setError("An error occurred. Please try again.");
       }
@@ -105,15 +142,21 @@ const Login = () => {
                     <Form.Group className="mb-3 position-relative">
                       <FaUser className="field-icon" />
                       <Form.Control 
-                        placeholder="Username or Email"  // Changed placeholder
+                        placeholder="Username or Email"
                         className="ps-5"
-                        type="text"  // Changed from "email" to "text"
-                        name="email"
-                        value={formData.email}
+                        type="text"
+                        name="username"
+                        value={formData.username}
                         onChange={handleChange}
                         disabled={loading}
+                        isInvalid={!!errors.email}
                         required
                       />
+                      {errors.email && (
+                        <Form.Control.Feedback type="invalid">
+                          {errors.email}
+                        </Form.Control.Feedback>
+                      )}
                     </Form.Group>
 
                     <Form.Group className="mb-3 position-relative">
@@ -126,6 +169,7 @@ const Login = () => {
                         value={formData.password}
                         onChange={handleChange}
                         disabled={loading}
+                        isInvalid={!!errors.password}
                         required
                       />
                       <span
@@ -135,6 +179,11 @@ const Login = () => {
                       >
                         {showPassword ? <FaEyeSlash /> : <FaEye />}
                       </span>
+                      {errors.password && (
+                        <Form.Control.Feedback type="invalid">
+                          {errors.password}
+                        </Form.Control.Feedback>
+                      )}
                     </Form.Group>
 
                     <button 

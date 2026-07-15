@@ -28,18 +28,29 @@ const validateSignup = [
     .withMessage('Passwords do not match')
 ];
 
+// ✅ FIXED: Login validation - Accept username OR email (NO @ required)
 const validateLogin = [
   body('email')
-    .isEmail()
-    .withMessage('Please provide a valid email')
-    .normalizeEmail(),
+    .notEmpty()
+    .withMessage('Username or email is required')
+    .trim()
+    .custom((value) => {
+      // Only validate as email if it contains @
+      if (value.includes('@')) {
+        const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if (!emailRegex.test(value)) {
+          throw new Error('Please provide a valid email');
+        }
+      }
+      return true;
+    }),
   
   body('password')
     .notEmpty()
     .withMessage('Password is required')
 ];
 
-// ✅ next IS REQUIRED for Express middleware
+// Validation result handler
 const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -51,10 +62,10 @@ const validate = (req, res, next) => {
       }))
     });
   }
-  next(); // ✅ Required for Express middleware
+  next();
 };
 
-// ✅ next IS REQUIRED for Express middleware
+// Sanitization middleware
 const sanitizeInput = (req, res, next) => {
   const sanitize = (value) => {
     if (typeof value === 'string') {
@@ -68,7 +79,7 @@ const sanitizeInput = (req, res, next) => {
       req.body[key] = sanitize(req.body[key]);
     });
   }
-  next(); // ✅ Required for Express middleware
+  next();
 };
 
 module.exports = {

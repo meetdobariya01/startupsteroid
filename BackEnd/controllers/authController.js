@@ -25,9 +25,8 @@ const sendTokenResponse = (user, statusCode, res) => {
   });
 };
 
-// ✅ NO next HERE
 const signup = async (req, res) => {
-  console.log('📝 Signup request received:', req.body);
+  //console.log('📝 Signup request received:', req.body);
   
   try {
     const { username, email, mobile, password, confirmPassword } = req.body;
@@ -62,7 +61,7 @@ const signup = async (req, res) => {
       password
     });
 
-    console.log('✅ User created successfully:', user._id);
+    //console.log('✅ User created successfully:', user._id);
     sendTokenResponse(user, 201, res);
     
   } catch (error) {
@@ -93,16 +92,27 @@ const signup = async (req, res) => {
   }
 };
 
-// ✅ NO next HERE
+// ✅ FIXED: Login with Username OR Email
 const login = async (req, res) => {
-  console.log('📝 Login request received:', req.body.email);
+  //console.log('📝 Login request received:', req.body);
   
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email }).select('+password');
+    //console.log('🔍 Searching for:', email);
+
+    // 🔥 IMPORTANT FIX: Search by BOTH username AND email
+    const user = await User.findOne({
+      $or: [
+        { email: email },
+        { username: email }
+      ]
+    }).select('+password');
+
+    
 
     if (!user) {
+    //console.log('❌ User not found:', email);
       return res.status(401).json({
         success: false,
         message: 'Invalid credentials'
@@ -122,6 +132,7 @@ const login = async (req, res) => {
     if (!isPasswordMatch) {
       await user.incrementLoginAttempts();
       const remainingAttempts = 5 - (user.loginAttempts || 0);
+    //console.log('❌ Invalid password for:', email);
       return res.status(401).json({
         success: false,
         message: `Invalid credentials. ${remainingAttempts} attempts remaining`
@@ -133,7 +144,7 @@ const login = async (req, res) => {
     user.lastLogin = Date.now();
     await user.save({ validateBeforeSave: false });
 
-    console.log('✅ Login successful:', email);
+    // console.log('✅ Login successful for:', user.username);
     sendTokenResponse(user, 200, res);
     
   } catch (error) {
@@ -146,7 +157,6 @@ const login = async (req, res) => {
   }
 };
 
-// ✅ NO next HERE
 const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -163,7 +173,6 @@ const getMe = async (req, res) => {
   }
 };
 
-// ✅ NO next HERE
 const changePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
@@ -193,7 +202,6 @@ const changePassword = async (req, res) => {
   }
 };
 
-// ✅ NO next HERE
 const updateProfile = async (req, res) => {
   try {
     const { username, email, mobile } = req.body;
@@ -237,7 +245,6 @@ const updateProfile = async (req, res) => {
   }
 };
 
-// ✅ NO next HERE
 const logout = async (req, res) => {
   try {
     res.status(200).json({
