@@ -5,12 +5,12 @@ import "./herosec.css";
 
 const Herosec = () => {
   const items = [
-    ["Diagnostic", "ReadyScore AI — 1 scan"],
-    ["Pairing", "Investor Matchmaking — ongoing"],
-    ["Supply", "Deal Flow — curated feed"],
-    ["Structure", "SPV — per round"],
-    ["Conditioning", "Finishing School — 6 wks"],
-    ["Event", "Demo Day — quarterly"],
+    ["Diagnostic", "ReadyScore AI - 1 scan"],
+    ["Pairing", "Investor Matchmaking - ongoing"],
+    ["Supply", "Deal Flow - curated feed"],
+    ["Structure", "SPV - per round"],
+    ["Conditioning", "Finishing School - 6 wks"],
+    ["Event", "Demo Day - quarterly"],
   ];
   return (
     <div>

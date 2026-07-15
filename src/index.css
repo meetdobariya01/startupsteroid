@@ -4,3 +4,316 @@ body,
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
   overflow-x: hidden;
 }
+
+/* Core Design System Tokens */
+:root {
+  --bg-main: #060b17;
+  --bg-nav: #101319;
+  --bg-toggle: #191d24;
+  --bg-card: rgba(255, 255, 255, 0.03);
+  --border-card: rgba(255, 255, 255, 0.15);
+  --border-subtle: rgba(255, 255, 255, 0.05);
+  --text-main: #ffffff;
+  --text-secondary: #b6bcc8;
+  --text-nav: #b8bcc5;
+  --accent-color: #d4ff2a;
+  --accent-hover: #9be52a;
+  --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  --logo-filter: none;
+  --icon-color: #ffffff;
+}
+
+[data-theme="light"] {
+  --bg-main: #ffffff;
+  --bg-nav: #f8f9fa;
+  --bg-toggle: #e9ecef;
+  --bg-card: #f8f9fa;
+  --border-card: rgba(0, 0, 0, 0.1);
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --text-main: #111625;
+  --text-secondary: #5c6479;
+  --text-nav: #495057;
+  --accent-color: #528c00;
+  --accent-hover: #3d6900;
+  --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  --logo-filter: invert(1) brightness(0.1);
+  --icon-color: #111625;
+}
+
+/* Global transitions for smooth theme switching */
+body, 
+section, 
+header, 
+footer, 
+.card, 
+.navbar, 
+.offcanvas, 
+input, 
+textarea,
+button,
+a,
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Profile Icon Styling */
+.profile-icon-link {
+  color: var(--icon-color) !important;
+  transition: color 0.3s ease;
+}
+.profile-icon-link:hover {
+  color: var(--accent-color) !important;
+}
+
+/* Override variables mapping for Light Theme */
+[data-theme="light"] {
+  background-color: var(--bg-main) !important;
+  color: var(--text-main) !important;
+}
+
+[data-theme="light"] body {
+  background-color: var(--bg-main) !important;
+  color: var(--text-main) !important;
+}
+
+/* Section Backgrounds Overrides */
+[data-theme="light"] section,
+[data-theme="light"] .hero-section,
+[data-theme="light"] .audience-section,
+[data-theme="light"] .contact-section,
+[data-theme="light"] .why-section,
+[data-theme="light"] .cta-section,
+[data-theme="light"] .investor-section,
+[data-theme="light"] .protocol-section,
+[data-theme="light"] .formulations-section,
+[data-theme="light"] .readyscore-section,
+[data-theme="light"] .dealflow-section,
+[data-theme="light"] .spv-section,
+[data-theme="light"] .documation-section,
+[data-theme="light"] .assessed-section,
+[data-theme="light"] .login-page,
+[data-theme="light"] .left-panel,
+[data-theme="light"] .founder-section,
+[data-theme="light"] .upload-section,
+[data-theme="light"] .outcome-section,
+[data-theme="light"] .investment-section,
+[data-theme="light"] .spv-cycle-section,
+[data-theme="light"] .login-container,
+[data-theme="light"] .signup-container,
+[data-theme="light"] .start-here-section,
+[data-theme="light"] .pricing-section,
+[data-theme="light"] .why-ready-section,
+[data-theme="light"] .documention-section {
+  background: var(--bg-main) !important;
+  background-color: var(--bg-main) !important;
+  color: var(--text-main) !important;
+}
+
+/* Navbar, Offcanvas and Footer Overrides */
+[data-theme="light"] .premium-navbar,
+[data-theme="light"] .premium-menu,
+[data-theme="light"] .footer {
+  background: var(--bg-nav) !important;
+  background-color: var(--bg-nav) !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+  color: var(--text-main) !important;
+}
+
+[data-theme="light"] .footer a {
+  color: var(--text-main) !important;
+}
+
+[data-theme="light"] .nav-link-custom {
+  color: var(--text-nav) !important;
+}
+
+[data-theme="light"] .nav-link-custom:hover {
+  color: var(--text-main) !important;
+}
+
+[data-theme="light"] .nav-link-custom.active-nav {
+  color: var(--text-main) !important;
+}
+
+[data-theme="light"] .close-btn {
+  color: var(--text-main) !important;
+}
+
+[data-theme="light"] .menu-toggle {
+  background: var(--bg-toggle) !important;
+  color: var(--text-main) !important;
+}
+
+/* Text color overrides */
+[data-theme="light"] .text-white,
+[data-theme="light"] .text-light,
+[data-theme="light"] .hero-title,
+[data-theme="light"] .hero-text,
+[data-theme="light"] .audience-title,
+[data-theme="light"] .audience-text,
+[data-theme="light"] .why-title,
+[data-theme="light"] .why-subtitle,
+[data-theme="light"] .cta-box h2,
+[data-theme="light"] .cta-box p,
+[data-theme="light"] .benefit-card,
+[data-theme="light"] .upload-title,
+[data-theme="light"] .upload-text,
+[data-theme="light"] .section-title,
+[data-theme="light"] .feature-title,
+[data-theme="light"] .desc-text,
+[data-theme="light"] .protocol-title,
+[data-theme="light"] .formulations-title,
+[data-theme="light"] .readyscore-title,
+[data-theme="light"] .dealflow-title,
+[data-theme="light"] .spv-title,
+[data-theme="light"] .documation-title,
+[data-theme="light"] .assessed-title,
+[data-theme="light"] .hero-description,
+[data-theme="light"] .upload-card h5,
+[data-theme="light"] .outcome-card h5,
+[data-theme="light"] .outcome-card p,
+[data-theme="light"] .feature-box h4,
+[data-theme="light"] .feature-box p,
+[data-theme="light"] .cycle-card h4,
+[data-theme="light"] .cycle-card p,
+[data-theme="light"] .investment-heading h2,
+[data-theme="light"] .investment-card h4,
+[data-theme="light"] .investment-card p,
+[data-theme="light"] .hero-subtitle,
+[data-theme="light"] .reason-card h5,
+[data-theme="light"] .reason-card p,
+[data-theme="light"] .founder-card h5,
+[data-theme="light"] .founder-card p,
+[data-theme="light"] .card-body h3,
+[data-theme="light"] .card-body h2,
+[data-theme="light"] .card-body p,
+[data-theme="light"] .card-body li {
+  color: var(--text-main) !important;
+}
+
+[data-theme="light"] .hero-text,
+[data-theme="light"] .audience-text,
+[data-theme="light"] .why-subtitle,
+[data-theme="light"] .cta-box p,
+[data-theme="light"] .upload-text,
+[data-theme="light"] .desc-text,
+[data-theme="light"] .hero-description,
+[data-theme="light"] .outcome-card p,
+[data-theme="light"] .feature-box p,
+[data-theme="light"] .cycle-card p,
+[data-theme="light"] .investment-card p,
+[data-theme="light"] .hero-subtitle,
+[data-theme="light"] .reason-card p,
+[data-theme="light"] .founder-card p {
+  color: var(--text-secondary) !important;
+}
+
+/* High Contrast Accents */
+[data-theme="light"] .hero-tag,
+[data-theme="light"] .hero-title span,
+[data-theme="light"] .green,
+[data-theme="light"] .accent,
+[data-theme="light"] .hero-badge,
+[data-theme="light"] .small-title,
+[data-theme="light"] .small-heading,
+[data-theme="light"] .badge-title,
+[data-theme="light"] .badge-founder,
+[data-theme="light"] .section-tag {
+  color: var(--accent-color) !important;
+}
+
+/* Cards & Containers */
+[data-theme="light"] .info-card,
+[data-theme="light"] .benefit-card,
+[data-theme="light"] .feature-card,
+[data-theme="light"] .form-box,
+[data-theme="light"] .card,
+[data-theme="light"] .custom-card,
+[data-theme="light"] .login-card,
+[data-theme="light"] .feature-box,
+[data-theme="light"] .cycle-card,
+[data-theme="light"] .investment-card,
+[data-theme="light"] .reason-card,
+[data-theme="light"] .founder-card,
+[data-theme="light"] .feature-card-dealflow,
+[data-theme="light"] .feature-card-readyscore,
+[data-theme="light"] .upload-card {
+  background: var(--bg-card) !important;
+  background-color: var(--bg-card) !important;
+  border: 1px solid var(--border-card) !important;
+  color: var(--text-main) !important;
+  box-shadow: var(--card-shadow) !important;
+}
+
+[data-theme="light"] .info-card div.border-bottom,
+[data-theme="light"] .spv-wrapper div.border-bottom,
+[data-theme="light"] .card-body div.border-bottom {
+  border-color: var(--border-subtle) !important;
+}
+
+/* Buttons */
+[data-theme="light"] .btn-outline-light {
+  color: var(--text-main) !important;
+  border-color: var(--text-main) !important;
+}
+
+[data-theme="light"] .btn-outline-light:hover {
+  background-color: var(--text-main) !important;
+  color: var(--bg-main) !important;
+  border-color: var(--text-main) !important;
+}
+
+[data-theme="light"] .btn-primary-custom {
+  background: var(--bg-toggle) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-card) !important;
+}
+
+[data-theme="light"] .btn-primary-custom:hover {
+  background: var(--text-main) !important;
+  color: var(--bg-main) !important;
+}
+
+[data-theme="light"] .btn-outline-custom {
+  border: 2px solid var(--text-main) !important;
+  color: var(--text-main) !important;
+}
+
+[data-theme="light"] .btn-outline-custom:hover {
+  background: var(--text-main) !important;
+  color: var(--bg-main) !important;
+}
+
+/* Forms */
+[data-theme="light"] .form-control {
+  background-color: var(--bg-main) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-card) !important;
+}
+
+[data-theme="light"] .form-control:focus {
+  background-color: var(--bg-main) !important;
+  color: var(--text-main) !important;
+  border-color: var(--accent-color) !important;
+  box-shadow: 0 0 0 0.25rem rgba(82, 140, 0, 0.25) !important;
+}
+
+[data-theme="light"] .form-control::placeholder {
+  color: var(--text-secondary) !important;
+  opacity: 0.7;
+}
+
+[data-theme="light"] .field-icon {
+  color: var(--text-main) !important;
+}
+
+/* Logo inversion for light background visibility */
+[data-theme="light"] img[alt="Startup Steroid Rx"] {
+  filter: var(--logo-filter) !important;
+}
