@@ -13,7 +13,7 @@ const menu = [
   { name: "READYSCORE AI", path: "/readyscore" },
   { name: "DEMO DAY", path: "/demo-day" },
   { name: "SPV", path: "/spv" },
-  { name: "FINISHING SCHOOL", path: "/finishing-school" },
+  { name: "FINISHING SCHOOL", path: "#" },  
 ];
 
 const Header = () => {
@@ -65,7 +65,7 @@ const Header = () => {
             <HiOutlineUserCircle size={32} />
           </a>
 
-          <motion.button
+          {/* <motion.button
             whileTap={{ scale: 0.95 }}
             whileHover={{ scale: 1.1 }}
             onClick={toggleTheme}
@@ -85,7 +85,7 @@ const Header = () => {
             }}
           >
             {theme === "dark" ? <HiOutlineSun size={26} /> : <HiOutlineMoon size={26} />}
-          </motion.button>
+          </motion.button> */}
 
           {/* Mobile Toggle */}
 
