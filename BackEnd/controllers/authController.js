@@ -1,14 +1,21 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE
-  });
+// ✅ FIXED: Include role in the token
+const generateToken = (user) => {
+  return jwt.sign(
+    { 
+      id: user._id,
+      role: user.role,
+      email: user.email
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRE || '7d' }
+  );
 };
 
 const sendTokenResponse = (user, statusCode, res) => {
-  const token = generateToken(user._id);
+  const token = generateToken(user);
   user.password = undefined;
   
   res.status(statusCode).json({
@@ -26,8 +33,6 @@ const sendTokenResponse = (user, statusCode, res) => {
 };
 
 const signup = async (req, res) => {
-  //console.log('📝 Signup request received:', req.body);
-  
   try {
     const { username, email, mobile, password, confirmPassword } = req.body;
 
@@ -61,7 +66,6 @@ const signup = async (req, res) => {
       password
     });
 
-    //console.log('✅ User created successfully:', user._id);
     sendTokenResponse(user, 201, res);
     
   } catch (error) {
@@ -92,16 +96,10 @@ const signup = async (req, res) => {
   }
 };
 
-// ✅ FIXED: Login with Username OR Email
 const login = async (req, res) => {
-  //console.log('📝 Login request received:', req.body);
-  
   try {
     const { email, password } = req.body;
 
-    //console.log('🔍 Searching for:', email);
-
-    // 🔥 IMPORTANT FIX: Search by BOTH username AND email
     const user = await User.findOne({
       $or: [
         { email: email },
@@ -109,10 +107,7 @@ const login = async (req, res) => {
       ]
     }).select('+password');
 
-    
-
     if (!user) {
-    //console.log('❌ User not found:', email);
       return res.status(401).json({
         success: false,
         message: 'Invalid credentials'
@@ -132,7 +127,6 @@ const login = async (req, res) => {
     if (!isPasswordMatch) {
       await user.incrementLoginAttempts();
       const remainingAttempts = 5 - (user.loginAttempts || 0);
-    //console.log('❌ Invalid password for:', email);
       return res.status(401).json({
         success: false,
         message: `Invalid credentials. ${remainingAttempts} attempts remaining`
@@ -144,7 +138,6 @@ const login = async (req, res) => {
     user.lastLogin = Date.now();
     await user.save({ validateBeforeSave: false });
 
-    // console.log('✅ Login successful for:', user.username);
     sendTokenResponse(user, 200, res);
     
   } catch (error) {
@@ -260,6 +253,7 @@ const logout = async (req, res) => {
   }
 };
 
+// ✅ FIXED: Added missing closing brace
 module.exports = {
   signup,
   login,

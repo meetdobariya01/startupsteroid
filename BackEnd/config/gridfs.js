@@ -1,190 +1,239 @@
+// config/gridfs.js
 const mongoose = require('mongoose');
-const { GridFsStorage } = require('multer-gridfs-storage');
 const multer = require('multer');
+const { GridFSBucket } = require('mongodb');
 const crypto = require('crypto');
-const path = require('path');
 
-// GridFS Bucket Reference
-let gfs, gridfsBucket;
+let bucket = null;
 
-// Initialize GridFS
-const initGridFS = () => {
-  return new Promise((resolve, reject) => {
-    const conn = mongoose.connection;
-    
-    // Initialize GridFS
-    gfs = require('gridfs-stream')(conn.db, mongoose.mongo);
-    gfs.collection('uploads');
-    
-    // Get the GridFS bucket
-    gridfsBucket = new mongoose.mongo.GridFSBucket(conn.db, {
-      bucketName: 'uploads'
-    });
-    
-    console.log('✅ GridFS initialized');
-    resolve({ gfs, gridfsBucket });
-  });
-};
-
-// Create Storage Engine for Multer
-const createStorage = () => {
-  return new GridFsStorage({
-    db: mongoose.connection,
-    bucketName: 'uploads',
-    file: (req, file) => {
-      return new Promise((resolve, reject) => {
-        try {
-          // Generate unique filename
-          const filename = `${crypto.randomBytes(16).toString('hex')}${path.extname(file.originalname)}`;
-          
-          const fileInfo = {
-            filename: filename,
-            bucketName: 'uploads',
-            metadata: {
-              originalName: file.originalname,
-              userId: req.user ? req.user.id : 'anonymous',
-              uploadDate: new Date().toISOString(),
-              contentType: file.mimetype,
-              fileSize: file.size
-            }
-          };
-          resolve(fileInfo);
-        } catch (error) {
-          reject(error);
-        }
+const initGridFS = async () => {
+  try {
+    if (mongoose.connection.db) {
+      bucket = new GridFSBucket(mongoose.connection.db, {
+        bucketName: 'uploads'
       });
+    
+      return bucket;
     }
-  });
-};
-
-// File Filter - Only allow specific file types
-const fileFilter = (req, file, cb) => {
-  const allowedTypes = process.env.ALLOWED_FILE_TYPES 
-    ? process.env.ALLOWED_FILE_TYPES.split(',') 
-    : ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
-  
-  if (allowedTypes.includes(file.mimetype)) {
-    cb(null, true);
-  } else {
-    cb(new Error(`File type not allowed. Allowed: ${allowedTypes.join(', ')}`), false);
+    console.error('❌ MongoDB connection not established');
+    return null;
+  } catch (error) {
+    console.error('❌ GridFS initialization error:', error);
+    return null;
   }
 };
 
-// Create Multer Upload Instance
-const upload = () => {
-  const storage = createStorage();
+const getGridFSBucket = () => {
+  if (!bucket) {
+    console.warn('⚠️ GridFS not initialized, attempting to initialize...');
+    initGridFS();
+  }
+  return bucket;
+};
+
+// ============================================
+// GRIDFS UPLOAD FUNCTION - Returns multer with GridFS storage
+// ============================================
+const uploadToGridFS = () => {
+  // Create storage engine for GridFS
+  const storage = multer.memoryStorage();
   
-  return multer({
+  // File filter
+  const fileFilter = (req, file, cb) => {
+    const allowedTypes = [
+      'application/pdf',
+      'image/jpeg',
+      'image/png',
+      'image/gif',
+      'image/webp',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'text/plain',
+      'application/rtf',
+      'application/zip',
+      'application/x-zip-compressed'
+    ];
+
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error(`File type ${file.mimetype} not allowed`), false);
+    }
+  };
+
+  // Create multer instance
+  const multerInstance = multer({
     storage: storage,
     limits: {
-      fileSize: parseInt(process.env.MAX_FILE_SIZE) || 10485760 // 10MB default
+      fileSize: 10 * 1024 * 1024 // 10MB limit
     },
     fileFilter: fileFilter
   });
-};
 
-// Helper: Get file by ID
-const getFileById = (fileId) => {
-  return new Promise((resolve, reject) => {
-    const id = new mongoose.Types.ObjectId(fileId);
-    const files = gfs.files;
-    
-    files.findOne({ _id: id }, (err, file) => {
-      if (err) reject(err);
-      resolve(file);
-    });
-  });
-};
+  // Override the single method to handle GridFS upload
+  const originalSingle = multerInstance.single.bind(multerInstance);
+  multerInstance.single = function(fieldName) {
+    return async function(req, res, next) {
+      // First, use multer to parse the file
+      const multerMiddleware = originalSingle(fieldName);
+      
+      multerMiddleware(req, res, async function(err) {
+        if (err) {
+          return next(err);
+        }
 
-// Helper: Get file by filename
-const getFileByFilename = (filename) => {
-  return new Promise((resolve, reject) => {
-    const files = gfs.files;
-    
-    files.findOne({ filename: filename }, (err, file) => {
-      if (err) reject(err);
-      resolve(file);
-    });
-  });
-};
+        // If no file, continue
+        if (!req.file) {
+          return next();
+        }
 
-// Helper: Delete file from GridFS
-const deleteFile = (fileId) => {
-  return new Promise((resolve, reject) => {
-    const id = new mongoose.Types.ObjectId(fileId);
-    
-    gridfsBucket.delete(id, (err) => {
-      if (err) reject(err);
-      resolve({ success: true, message: 'File deleted successfully' });
-    });
-  });
-};
+        try {
+          // Get GridFS bucket
+          const bucket = getGridFSBucket();
+          if (!bucket) {
+            throw new Error('GridFS bucket not initialized');
+          }
 
-// Helper: Get all files by user
-const listUserFiles = (userId, page = 1, limit = 20) => {
-  return new Promise((resolve, reject) => {
-    const files = gfs.files;
-    const skip = (page - 1) * limit;
-    
-    files.find({ 'metadata.userId': userId })
-      .sort({ uploadDate: -1 })
-      .skip(skip)
-      .limit(limit)
-      .toArray((err, fileList) => {
-        if (err) reject(err);
-        resolve(fileList);
+          // Generate unique filename
+          const filename = `${Date.now()}-${crypto.randomBytes(8).toString('hex')}-${req.file.originalname}`;
+
+          // Upload to GridFS
+          const uploadStream = bucket.openUploadStream(filename, {
+            contentType: req.file.mimetype,
+            metadata: {
+              originalName: req.file.originalname,
+              uploadedBy: req.user ? req.user.id : 'unknown',
+              uploadDate: new Date(),
+              fileSize: req.file.size
+            }
+          });
+
+          // Write file to GridFS
+          uploadStream.write(req.file.buffer);
+          uploadStream.end();
+
+          // Wait for upload to complete
+          await new Promise((resolve, reject) => {
+            uploadStream.on('finish', () => {
+              // Attach GridFS ID to req.file
+              req.file.id = uploadStream.id;
+              req.file.filename = filename;
+              resolve();
+            });
+            uploadStream.on('error', reject);
+          });
+
+
+          next();
+        } catch (error) {
+          console.error('❌ GridFS upload error:', error);
+          next(error);
+        }
       });
-  });
+    };
+  };
+
+  return multerInstance;
 };
 
-// Helper: Count user files
-const countUserFiles = (userId) => {
-  return new Promise((resolve, reject) => {
-    const files = gfs.files;
-    
-    files.countDocuments({ 'metadata.userId': userId }, (err, count) => {
-      if (err) reject(err);
-      resolve(count);
-    });
-  });
-};
-
-// Helper: Check if file exists
-const fileExists = async (fileId) => {
+// ============================================
+// OTHER FUNCTIONS
+// ============================================
+const getFileById = async (fileId) => {
   try {
-    const file = await getFileById(fileId);
-    return !!file;
+    const bucket = getGridFSBucket();
+    if (!bucket) return null;
+    
+    const files = await bucket.find({ _id: fileId }).toArray();
+    return files[0] || null;
   } catch (error) {
+    console.error('Error getting file:', error);
+    return null;
+  }
+};
+
+const getFileMetadata = async (fileId) => {
+  try {
+    const bucket = getGridFSBucket();
+    if (!bucket) return null;
+    
+    const files = await bucket.find({ _id: fileId }).toArray();
+    return files[0] || null;
+  } catch (error) {
+    console.error('Error getting file metadata:', error);
+    return null;
+  }
+};
+
+const deleteFile = async (fileId) => {
+  try {
+    const bucket = getGridFSBucket();
+    if (!bucket) return false;
+    
+    await bucket.delete(fileId);
+    return true;
+  } catch (error) {
+    console.error('Error deleting file:', error);
     return false;
   }
 };
 
-// Helper: Get file metadata
-const getFileMetadata = async (fileId) => {
-  const file = await getFileById(fileId);
-  if (!file) return null;
-  
-  return {
-    id: file._id,
-    filename: file.filename,
-    originalName: file.metadata?.originalName || file.filename,
-    contentType: file.contentType,
-    length: file.length,
-    uploadDate: file.uploadDate,
-    metadata: file.metadata || {}
-  };
+const fileExists = async (fileId) => {
+  try {
+    const bucket = getGridFSBucket();
+    if (!bucket) return false;
+    
+    const files = await bucket.find({ _id: fileId }).toArray();
+    return files.length > 0;
+  } catch (error) {
+    console.error('Error checking file existence:', error);
+    return false;
+  }
+};
+
+const listUserFiles = async (userId) => {
+  try {
+    const bucket = getGridFSBucket();
+    if (!bucket) return [];
+    
+    const files = await bucket.find({
+      'metadata.uploadedBy': userId
+    }).toArray();
+    
+    return files;
+  } catch (error) {
+    console.error('Error listing user files:', error);
+    return [];
+  }
+};
+
+const countUserFiles = async (userId) => {
+  try {
+    const bucket = getGridFSBucket();
+    if (!bucket) return 0;
+    
+    const count = await bucket.find({
+      'metadata.uploadedBy': userId
+    }).count();
+    
+    return count;
+  } catch (error) {
+    console.error('Error counting user files:', error);
+    return 0;
+  }
 };
 
 module.exports = {
   initGridFS,
-  upload,
+  getGridFSBucket,
+  upload: uploadToGridFS,
   getFileById,
-  getFileByFilename,
+  getFileMetadata,
   deleteFile,
+  fileExists,
   listUserFiles,
   countUserFiles,
-  fileExists,
-  getFileMetadata,
-  gfs,
-  gridfsBucket
+  gridfsBucket: getGridFSBucket
 };

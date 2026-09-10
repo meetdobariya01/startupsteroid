@@ -1,49 +1,362 @@
+/* Documation Section Base */
 .documention-section {
-  background: #f8f9fa;
+  background: var(--bg-main) !important;
+  color: var(--text-main) !important;
   min-height: 100vh;
+  padding-bottom: 80px;
 }
 
-.card {
+/* Premium Card Wrapper */
+.documention-section .card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-card) !important;
+  color: var(--text-main) !important;
+  box-shadow: var(--card-shadow) !important;
   border-radius: 20px;
+  animation: fade 0.4s ease;
+  backdrop-filter: blur(10px);
+}
+
+.text-color {
+  color: var(--text-main) !important;
+}
+
+.text-secondary-custom {
+  color: var(--text-secondary) !important;
+}
+
+/* Stepper Component Styles */
+.stepper-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  margin-bottom: 40px;
+  padding: 0 10px;
+}
+
+.stepper-progress-line {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--border-card);
+  z-index: 1;
+  border-radius: 2px;
+}
+
+.stepper-progress-line-fill {
+  height: 100%;
+  background: var(--accent-color);
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 2px;
+}
+
+.step-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+  position: relative;
+  cursor: pointer;
+  width: 50px;
+}
+
+.step-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg-main);
+  border: 2px solid var(--border-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+  box-shadow: var(--card-shadow);
+}
+
+.step-node.active .step-circle {
+  border-color: var(--accent-color);
+  background: var(--bg-toggle);
+  color: var(--text-main);
+  box-shadow: 0 0 15px rgba(212, 255, 42, 0.25);
+  transform: scale(1.1);
+}
+
+.step-node.completed .step-circle {
+  border-color: var(--accent-color);
+  background: var(--accent-color);
+  color: #060b17; /* Dark theme contrast text */
+}
+
+/* Light theme contrast override */
+[data-theme="light"] .step-node.completed .step-circle {
+  color: #ffffff;
+  background: var(--accent-color);
+}
+
+.step-label {
+  position: absolute;
+  top: 50px;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
+}
+
+.step-node.active .step-label {
+  color: var(--text-main);
+}
+
+.step-node.completed .step-label {
+  color: var(--accent-color);
+}
+
+/* File Upload Zone */
+.upload-zone {
+  border: 2px dashed var(--border-card);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.01);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+}
+
+.upload-zone:hover {
+  border-color: var(--accent-color);
+  background: rgba(212, 255, 42, 0.03);
+  transform: translateY(-2px);
+}
+
+.upload-zone-icon {
+  font-size: 2.2rem;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  transition: color 0.3s ease;
+}
+
+.upload-zone:hover .upload-zone-icon {
+  color: var(--accent-color);
+}
+
+/* File List Card (Uploaded State) */
+.uploaded-file-card {
+  border: 1px solid var(--border-card);
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 140px;
+  transition: all 0.3s ease;
+}
+
+.uploaded-file-card:hover {
+  border-color: var(--border-card);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.file-info-container {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 65%;
+}
+
+.file-type-icon {
+  font-size: 2.2rem;
+  color: var(--accent-color);
+  flex-shrink: 0;
+}
+
+.file-details {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.file-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-meta {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.file-action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.btn-file-action {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-card);
+  background: transparent;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+}
+
+.btn-file-action:hover {
+  color: var(--text-main);
+  border-color: var(--text-main);
+}
+
+.btn-file-action.btn-delete:hover {
+  color: #ff4d4f;
+  border-color: #ff4d4f;
+  background: rgba(255, 77, 79, 0.05);
+}
+
+.btn-file-action.btn-download:hover {
+  color: var(--accent-color);
+  border-color: var(--accent-color);
+  background: rgba(212, 255, 42, 0.05);
+}
+
+/* Upload Progress Box */
+.upload-progress-container {
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.01);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 140px;
 }
 
 .progress {
-  height: 10px;
-  border-radius: 20px;
-}
-
-.progress-bar {
-  background: #060b17;
-}
-
-.form-label {
-  font-weight: 600;
-}
-
-.form-control {
+  height: 8px;
   border-radius: 10px;
-  padding: 12px;
+  background: var(--border-card) !important;
+  overflow: hidden;
 }
 
-.text-success {
-  font-size: 14px;
-}
-.btn-css {
-  min-width: 140px;
-}
-
-.card {
-  animation: fade 0.4s ease;
+.progress-bar-custom {
+  background: var(--accent-color) !important;
+  height: 100%;
+  transition: width 0.2s ease;
 }
 
+/* Custom Alert / Toast styling */
+.custom-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  min-width: 300px;
+  border-radius: 12px;
+  background: var(--bg-nav) !important;
+  border: 1px solid var(--border-card) !important;
+  color: var(--text-main) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Animation */
 @keyframes fade {
   from {
     opacity: 0;
-    transform: translateX(40px);
+    transform: translateY(15px);
   }
-
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateY(0);
   }
+}
+
+/* Summary List Styles */
+.summary-category-header {
+  border-bottom: 2px solid var(--border-card);
+  padding-bottom: 8px;
+  margin-top: 24px;
+  font-weight: 700;
+  color: var(--accent-color);
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.summary-item.missing {
+  border-color: rgba(255, 77, 79, 0.2);
+  background: rgba(255, 77, 79, 0.01);
+}
+
+.summary-item.completed {
+  border-color: rgba(212, 255, 42, 0.15);
+  background: rgba(212, 255, 42, 0.01);
+}
+
+/* Preview Modal styling */
+.preview-modal .modal-content {
+  background: var(--bg-main) !important;
+  border: 1px solid var(--border-card) !important;
+  color: var(--text-main) !important;
+  border-radius: 16px;
+}
+
+.preview-modal .modal-header {
+  border-bottom: 1px solid var(--border-card) !important;
+}
+
+.preview-modal .modal-footer {
+  border-top: 1px solid var(--border-card) !important;
+}
+
+.preview-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 350px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: auto;
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 500px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.preview-pdf {
+  width: 100%;
+  height: 500px;
+  border: none;
 }

@@ -68,19 +68,20 @@ const Login = () => {
         }
       );
 
-      // console.log('✅ Login response:', response.data);
+      console.log('✅ Login response:', response.data);
 
       if (response.data.success) {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("user", JSON.stringify(response.data.user));
-        navigate("/dashboard");
+        
+        // Redirect to home page instead of dashboard
+        navigate("/documation");
       }
     } catch (error) {
       console.error('❌ Login error:', error);
       
       if (error.response) {
-        // Server responded with error
-        // console.log('📄 Error response:', error.response.data);
+        console.log('📄 Error response:', error.response.data);
         
         if (error.response.data.errors) {
           // Validation errors
