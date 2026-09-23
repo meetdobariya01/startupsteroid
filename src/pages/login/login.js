@@ -34,75 +34,67 @@ const Login = () => {
   };
 
   // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    // Clear previous errors
-    setError("");
-    setErrors({});
-    setLoading(true);
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    // Client-side validation
-    if (!formData.username.trim()) {
-      setError("Please enter username or email");
-      setLoading(false);
-      return;
-    }
-    if (!formData.password) {
-      setError("Please enter your password");
-      setLoading(false);
-      return;
-    }
+  setError("");
+  setErrors({});
+  setLoading(true);
 
-    try {
-      console.log('📝 Sending login request:', {
+  if (!formData.username.trim()) {
+    setError("Please enter username or email");
+    setLoading(false);
+    return;
+  }
+
+  if (!formData.password) {
+    setError("Please enter your password");
+    setLoading(false);
+    return;
+  }
+
+  try {
+    const response = await axios.post(
+      `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/auth/login`,
+      {
         email: formData.username,
-        password: '******'
-      });
-
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/auth/login`,
-        {
-          email: formData.username,
-          password: formData.password
-        }
-      );
-
-      console.log('✅ Login response:', response.data);
-
-      if (response.data.success) {
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-        
-        // Redirect to home page instead of dashboard
-        navigate("/documation");
+        password: formData.password,
       }
-    } catch (error) {
-      console.error('❌ Login error:', error);
-      
-      if (error.response) {
-        console.log('📄 Error response:', error.response.data);
-        
-        if (error.response.data.errors) {
-          // Validation errors
-          const fieldErrors = {};
-          error.response.data.errors.forEach(err => {
-            fieldErrors[err.field] = err.message;
-          });
-          setErrors(fieldErrors);
-          setError("Please fix the errors below");
-        } else {
-          setError(error.response.data.message || "Login failed");
-        }
-      } else if (error.request) {
-        setError("Cannot connect to server. Please check your connection.");
-      } else {
-        setError("An error occurred. Please try again.");
-      }
-    } finally {
-      setLoading(false);
+    );
+
+    if (response.data.success) {
+      // Save login data
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+
+      // ✅ Trigger First / Later popup
+      localStorage.setItem("showLoginPrompt", "true");
+      window.dispatchEvent(new Event("userUpdated"));
+
+      // Redirect
+      navigate("/documation");
     }
-  };
+  } catch (error) {
+    if (error.response) {
+      if (error.response.data.errors) {
+        const fieldErrors = {};
+        error.response.data.errors.forEach((err) => {
+          fieldErrors[err.field] = err.message;
+        });
+        setErrors(fieldErrors);
+        setError("Please fix the errors below");
+      } else {
+        setError(error.response.data.message || "Login failed");
+      }
+    } else if (error.request) {
+      setError("Cannot connect to server. Please check your connection.");
+    } else {
+      setError("An error occurred. Please try again.");
+    }
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div>

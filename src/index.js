@@ -15,8 +15,10 @@ import Matchmaking from "./pages/matchmaking/matchmaking";
 import Dealflow from "./pages/dealflow/dealflow";
 import Readyscore from "./pages/readyscore/readyscore";
 import Spv from "./pages/spv/spv";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminLogin from "./pages/admin/AdminLogin";
+import AdminRoute from "./components/AdminRoute/AdminRoute";
+import AdminDashboard from "./components/AdminRoute/AdminDashboard";
+import AdminLogin from "./pages/adminLogin/AdminLogin";
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <ThemeProvider>
@@ -30,15 +32,20 @@ root.render(
         <Route path="/matchmaking" element={<Matchmaking />} />
         <Route path="/dealflow" element={<Dealflow />} />
         <Route path="/readyscore" element={<Readyscore />} />
-         <Route path="/spv" element={<Spv />} />
-         <Route path="/admin" element={<AdminDashboard />} />
-         <Route path="/admin-login" element={<AdminLogin />} />
+        <Route path="/spv" element={<Spv />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
+        {/* ✅ /admin/* covers /admin, /admin/users, /admin/verification, etc. */}
+        <Route
+          path="/admin/*"
+          element={
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
+          }
+        />
       </Routes>
     </Router>
   </ThemeProvider>,
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
