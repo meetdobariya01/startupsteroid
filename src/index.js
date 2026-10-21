@@ -18,6 +18,10 @@ import Spv from "./pages/spv/spv";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminLogin from "./pages/admin/AdminLogin";
 import Gtm from "./pages/gtm-guru/gtm";
+import AdminRoute from "./components/AdminRoute/AdminRoute";
+// import AdminDashboard from "./components/AdminRoute/AdminDashboard";
+// import AdminLogin from "./pages/adminLogin/AdminLogin";
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <ThemeProvider>
@@ -35,12 +39,19 @@ root.render(
         <Route path="/gtm-guru" element={<Gtm />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin-login" element={<AdminLogin />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
+        {/* ✅ /admin/* covers /admin, /admin/users, /admin/verification, etc. */}
+        <Route
+          path="/admin/*"
+          element={
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
+          }
+        />
       </Routes>
     </Router>
   </ThemeProvider>,
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();

@@ -7,6 +7,8 @@ const connectDB = require('./config/database');
 const { initGridFS } = require('./config/gridfs');
 require('dotenv').config();
 
+const adminRoutes = require('./routes/admin.routes');
+
 const app = express();
 
 // Connect to Database
@@ -55,7 +57,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/files', require('./routes/fileRoutes'));
-
+app.use('/api/admin', adminRoutes);
 // Health Check
 app.get('/health', (req, res) => {
   res.json({

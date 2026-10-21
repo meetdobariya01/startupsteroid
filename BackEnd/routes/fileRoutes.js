@@ -14,38 +14,48 @@ const {
   shareFile,
   removeShare,
   getFilePreview,
-  adminGetAllFiles,  // Add this
-  adminGetStats,     // Add this
-  adminDeleteFile    // Add this
+  adminGetAllFiles,
+  adminGetStats,
+  adminDeleteFile,
 } = require('../controllers/fileController');
 
 // All routes are protected
 router.use(authMiddleware);
 
-// UPLOAD ROUTE
+// ─────────────────────────────────────────────
+// UPLOAD
+// ─────────────────────────────────────────────
 router.post('/upload', upload().single('file'), uploadFile);
 
-// LIST ROUTES
+// ─────────────────────────────────────────────
+// LIST
+// ─────────────────────────────────────────────
 router.get('/', listFiles);
 
-// ============================================
-// ADMIN ROUTES - Must be before dynamic routes
-// ============================================
+// ─────────────────────────────────────────────
+// ADMIN ROUTES — MUST be before dynamic /:id routes
+// ─────────────────────────────────────────────
 router.get('/admin/stats', adminGetStats);
 router.get('/admin/all', adminGetAllFiles);
 router.delete('/admin/:id', adminDeleteFile);
 
-// SINGLE FILE ROUTES - ORDER MATTERS!
+// ─────────────────────────────────────────────
+// SINGLE FILE ROUTES — ORDER MATTERS!
+// ─────────────────────────────────────────────
 router.get('/:id/metadata', getFileMetadataOnly);
 router.get('/:id/preview', getFilePreview);
 router.get('/:id/download', downloadFile);
 router.get('/:id', getFile);
 
+// ─────────────────────────────────────────────
 // SHARING ROUTES
+// ─────────────────────────────────────────────
 router.post('/:id/share', shareFile);
 router.delete('/:id/share/:userId', removeShare);
 
-// DELETE ROUTE
+// ─────────────────────────────────────────────
+// DELETE
+// ─────────────────────────────────────────────
 router.delete('/:id', deleteFileHandler);
 
 module.exports = router;

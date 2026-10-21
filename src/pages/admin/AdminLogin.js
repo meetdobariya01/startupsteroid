@@ -46,7 +46,7 @@ const AdminLogin = () => {
 
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/auth/login`,
+        `${process.env.REACT_APP_API_URL || 'http://api.startupsteroids.in'}/api/auth/login`,
         {
           email: formData.email,
           password: formData.password

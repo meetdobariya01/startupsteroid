@@ -74,7 +74,7 @@ const sections = {
 };
 
 const titles = Object.keys(sections);
-const API_URL = `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/files`;
+const API_URL = `${process.env.REACT_APP_API_URL || 'http://api.startupsteroids.in'}/api/files`;
 
 const Documation = () => {
   const { pathname } = useLocation();
