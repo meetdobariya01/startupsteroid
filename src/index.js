@@ -17,6 +17,7 @@ import Readyscore from "./pages/readyscore/readyscore";
 import Spv from "./pages/spv/spv";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminLogin from "./pages/admin/AdminLogin";
+import Gtm from "./pages/gtm-guru/gtm";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <ThemeProvider>
@@ -30,9 +31,10 @@ root.render(
         <Route path="/matchmaking" element={<Matchmaking />} />
         <Route path="/dealflow" element={<Dealflow />} />
         <Route path="/readyscore" element={<Readyscore />} />
-         <Route path="/spv" element={<Spv />} />
-         <Route path="/admin" element={<AdminDashboard />} />
-         <Route path="/admin-login" element={<AdminLogin />} />
+        <Route path="/spv" element={<Spv />} />
+        <Route path="/gtm-guru" element={<Gtm />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin-login" element={<AdminLogin />} />
       </Routes>
     </Router>
   </ThemeProvider>,

@@ -11,7 +11,8 @@ const menu = [
   { name: "MATCHMAKING", path: "/matchmaking" },
   { name: "DEAL FLOW", path: "/dealflow" },
   { name: "READYSCORE AI", path: "/readyscore" },
-  { name: "DEMO DAY", path: "/demo-day" },
+  { name: "DEMO DAY", path: "#" },
+  { name: "GTM GURU", path: "/gtm-guru" },
   { name: "SPV", path: "/spv" },
   { name: "FINISHING SCHOOL", path: "#" },  
 ];
@@ -23,6 +24,7 @@ const Header = () => {
     <div>
       <Navbar expand="lg" className="premium-navbar py-3">
         <Container fluid="xl">
+          
           {/* Logo */}
 
           <Navbar.Brand href="/">
@@ -77,7 +79,7 @@ const Header = () => {
               color: "var(--text-main)",
               cursor: "pointer",
               padding: "6px",
-              borderRadius: "50%",
+              borderRadius: "50%",  
               display: "flex",
               alignItems: "center",
               justifyContent: "center",

@@ -41,7 +41,7 @@ const Protocol = () => {
               ORDER MATTERS. HERE'S <br /> THE REGIMEN.
             </h2>
             <p className="protocol-subtitle">
-              Each stage feeds the next — this is a sequence, not a menu.
+              Each stage feeds the next - this is a sequence, not a menu.
             </p>
           </motion.div>
 
