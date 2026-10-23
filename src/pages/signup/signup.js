@@ -15,9 +15,9 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  
-  const API_URL = process.env.REACT_APP_API_URL || 'http://api.startupsteroids.in';
-  
+
+  const API_URL = 'http://api.startupsteroids.in';
+
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -44,7 +44,7 @@ const Signup = () => {
 
     try {
       // console.log('Sending request to:', `${API_URL}/api/auth/signup`);
-      
+
       const response = await axios.post(
         `${API_URL}/api/auth/signup`,
         {
@@ -60,7 +60,7 @@ const Signup = () => {
 
       if (response.data.success) {
         setSuccess("Account created successfully! Redirecting to login...");
-        
+
         if (response.data.token) {
           localStorage.setItem("token", response.data.token);
           localStorage.setItem("user", JSON.stringify(response.data.user));
@@ -80,7 +80,7 @@ const Signup = () => {
       }
     } catch (error) {
       console.error('Error details:', error);
-      
+
       if (error.response) {
         console.log('Server error:', error.response.data);
         setError(error.response.data.message || "Signup failed");
@@ -97,7 +97,7 @@ const Signup = () => {
   };
 
   return (
-    <div>
+    <div>pm2 logs startupsteroid-backend --lines 20
       <Header />
 
       <div className="login-page d-flex align-items-center">
@@ -111,9 +111,9 @@ const Signup = () => {
                   {error && (
                     <div className="alert alert-danger alert-dismissible fade show" role="alert">
                       {error}
-                      <button 
-                        type="button" 
-                        className="btn-close" 
+                      <button
+                        type="button"
+                        className="btn-close"
                         onClick={() => setError("")}
                       ></button>
                     </div>
@@ -122,9 +122,9 @@ const Signup = () => {
                   {success && (
                     <div className="alert alert-success alert-dismissible fade show" role="alert">
                       {success}
-                      <button 
-                        type="button" 
-                        className="btn-close" 
+                      <button
+                        type="button"
+                        className="btn-close"
                         onClick={() => setSuccess("")}
                       ></button>
                     </div>
@@ -133,20 +133,25 @@ const Signup = () => {
                   <Form onSubmit={handleSubmit}>
                     <Form.Group className="mb-3 position-relative">
                       <FaUser className="field-icon" />
-                      <Form.Control 
-                        placeholder="Username"
+                      <Form.Control
+                        placeholder="Full Name (e.g. John Doe)"
                         className="ps-5"
                         name="username"
                         value={formData.username}
                         onChange={handleChange}
                         disabled={loading}
+                        minLength={3}
+                        maxLength={50}
                         required
                       />
+                      <small className="text-muted d-block mt-1 ps-5">
+                        Letters, numbers, spaces allowed
+                      </small>
                     </Form.Group>
 
                     <Form.Group className="mb-3 position-relative">
                       <FaEnvelope className="field-icon" />
-                      <Form.Control 
+                      <Form.Control
                         placeholder="Email"
                         className="ps-5"
                         type="text"  // Changed from "email" to "text" to match login
@@ -160,7 +165,7 @@ const Signup = () => {
 
                     <Form.Group className="mb-3 position-relative">
                       <FaPhone className="field-icon" />
-                      <Form.Control 
+                      <Form.Control
                         placeholder="Mobile"
                         className="ps-5"
                         type="tel"
@@ -208,8 +213,8 @@ const Signup = () => {
                       />
                     </Form.Group>
 
-                    <button 
-                      type="submit" 
+                    <button
+                      type="submit"
                       className="btn btn-outline-dark w-100"
                       disabled={loading}
                     >

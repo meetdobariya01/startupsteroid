@@ -15,7 +15,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [errors, setErrors] = useState({});
-  
+
   // Form state
   const [formData, setFormData] = useState({
     username: "",
@@ -34,67 +34,67 @@ const Login = () => {
   };
 
   // Handle form submission
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  setError("");
-  setErrors({});
-  setLoading(true);
+    setError("");
+    setErrors({});
+    setLoading(true);
 
-  if (!formData.username.trim()) {
-    setError("Please enter username or email");
-    setLoading(false);
-    return;
-  }
-
-  if (!formData.password) {
-    setError("Please enter your password");
-    setLoading(false);
-    return;
-  }
-
-  try {
-    const response = await axios.post(
-      `${process.env.REACT_APP_API_URL || "http://api.startupsteroids.in"}/api/auth/login`,
-      {
-        email: formData.username,
-        password: formData.password,
-      }
-    );
-
-    if (response.data.success) {
-      // Save login data
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
-
-      // ✅ Trigger First / Later popup
-      localStorage.setItem("showLoginPrompt", "true");
-      window.dispatchEvent(new Event("userUpdated"));
-
-      // Redirect
-      navigate("/documation");
+    if (!formData.username.trim()) {
+      setError("Please enter username or email");
+      setLoading(false);
+      return;
     }
-  } catch (error) {
-    if (error.response) {
-      if (error.response.data.errors) {
-        const fieldErrors = {};
-        error.response.data.errors.forEach((err) => {
-          fieldErrors[err.field] = err.message;
-        });
-        setErrors(fieldErrors);
-        setError("Please fix the errors below");
+
+    if (!formData.password) {
+      setError("Please enter your password");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL || "http://api.startupsteroids.in"}/api/auth/login`,
+        {
+          email: formData.username,
+          password: formData.password,
+        }
+      );
+
+      if (response.data.success) {
+        // Save login data
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+
+        // ✅ Trigger First / Later popup
+        localStorage.setItem("showLoginPrompt", "true");
+        window.dispatchEvent(new Event("userUpdated"));
+
+        // Redirect
+        navigate("/documation");
+      }
+    } catch (error) {
+      if (error.response) {
+        if (error.response.data.errors) {
+          const fieldErrors = {};
+          error.response.data.errors.forEach((err) => {
+            fieldErrors[err.field] = err.message;
+          });
+          setErrors(fieldErrors);
+          setError("Please fix the errors below");
+        } else {
+          setError(error.response.data.message || "Login failed");
+        }
+      } else if (error.request) {
+        setError("Cannot connect to server. Please check your connection.");
       } else {
-        setError(error.response.data.message || "Login failed");
+        setError("An error occurred. Please try again.");
       }
-    } else if (error.request) {
-      setError("Cannot connect to server. Please check your connection.");
-    } else {
-      setError("An error occurred. Please try again.");
+    } finally {
+      setLoading(false);
     }
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div>
@@ -123,9 +123,9 @@ const handleSubmit = async (e) => {
                   {error && (
                     <div className="alert alert-danger alert-dismissible fade show" role="alert">
                       {error}
-                      <button 
-                        type="button" 
-                        className="btn-close" 
+                      <button
+                        type="button"
+                        className="btn-close"
                         onClick={() => setError("")}
                       ></button>
                     </div>
@@ -134,8 +134,8 @@ const handleSubmit = async (e) => {
                   <Form onSubmit={handleSubmit}>
                     <Form.Group className="mb-3 position-relative">
                       <FaUser className="field-icon" />
-                      <Form.Control 
-                        placeholder="Username or Email"
+                      <Form.Control
+                        placeholder="Full Name or Email"  // ✅ was "Username or Email"
                         className="ps-5"
                         type="text"
                         name="username"
@@ -179,8 +179,8 @@ const handleSubmit = async (e) => {
                       )}
                     </Form.Group>
 
-                    <button 
-                      type="submit" 
+                    <button
+                      type="submit"
                       className="btn btn-outline-dark w-100"
                       disabled={loading}
                     >
