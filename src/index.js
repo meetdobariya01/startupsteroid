@@ -15,9 +15,12 @@ import Matchmaking from "./pages/matchmaking/matchmaking";
 import Dealflow from "./pages/dealflow/dealflow";
 import Readyscore from "./pages/readyscore/readyscore";
 import Spv from "./pages/spv/spv";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminLogin from "./pages/admin/AdminLogin";
+import Gtm from "./pages/gtm-guru/gtm";
 import AdminRoute from "./components/AdminRoute/AdminRoute";
-import AdminDashboard from "./components/AdminRoute/AdminDashboard";
-import AdminLogin from "./pages/adminLogin/AdminLogin";
+// import AdminDashboard from "./components/AdminRoute/AdminDashboard";
+// import AdminLogin from "./pages/adminLogin/AdminLogin";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -33,6 +36,9 @@ root.render(
         <Route path="/dealflow" element={<Dealflow />} />
         <Route path="/readyscore" element={<Readyscore />} />
         <Route path="/spv" element={<Spv />} />
+        <Route path="/gtm-guru" element={<Gtm />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         {/* ✅ /admin/* covers /admin, /admin/users, /admin/verification, etc. */}
         <Route
