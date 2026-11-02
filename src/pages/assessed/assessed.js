@@ -1,7 +1,7 @@
-import React from "react";
+import { useEffect } from "react";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import { motion } from "framer-motion";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation  } from "react-router-dom";
 import "./assessed.css";
 import Header from "../../components/header/header";
 import Footer from "../../components/footer/footer";
@@ -31,6 +31,15 @@ const plans = [
 ];
 
 const Assessed = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "instant", // or "smooth"
+    });
+  }, [pathname]);
   return (
     <div>
       {/* Header */}
