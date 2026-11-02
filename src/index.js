@@ -19,6 +19,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminLogin from "./pages/admin/AdminLogin";
 import Gtm from "./pages/gtm-guru/gtm";
 import AdminRoute from "./components/AdminRoute/AdminRoute";
+import Demoday from "./pages/demoday/demoday";
 // import AdminDashboard from "./components/AdminRoute/AdminDashboard";
 // import AdminLogin from "./pages/adminLogin/AdminLogin";
 
@@ -37,6 +38,7 @@ root.render(
         <Route path="/readyscore" element={<Readyscore />} />
         <Route path="/spv" element={<Spv />} />
         <Route path="/gtm-guru" element={<Gtm />} />
+        <Route path="/demoday" element={<Demoday />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/admin/login" element={<AdminLogin />} />

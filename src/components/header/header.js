@@ -1,7 +1,13 @@
 import { useState, useContext } from "react";
 import { Navbar, Container, Nav, Button, Offcanvas } from "react-bootstrap";
 import { motion } from "framer-motion";
-import { HiOutlineMenuAlt3, HiMenu, HiOutlineUserCircle, HiOutlineSun, HiOutlineMoon } from "react-icons/hi";
+import {
+  HiOutlineMenuAlt3,
+  HiMenu,
+  HiOutlineUserCircle,
+  HiOutlineSun,
+  HiOutlineMoon,
+} from "react-icons/hi";
 import { IoClose } from "react-icons/io5";
 import { NavLink } from "react-router-dom";
 import { ThemeContext } from "../../context/ThemeContext";
@@ -9,12 +15,12 @@ import "./header.css";
 
 const menu = [
   { name: "MATCHMAKING", path: "/matchmaking" },
-  { name: "DEAL FLOW", path: "/dealflow" },
-  { name: "READYSCORE AI", path: "/readyscore" },
-  { name: "DEMO DAY", path: "#" },
   { name: "GTM GURU", path: "/gtm-guru" },
+  { name: "DEAL FLOW", path: "/dealflow" },
+  { name: "DEMO DAY", path: "/demoday" },
+  { name: "READYSCORE AI", path: "/readyscore" },
   { name: "SPV", path: "/spv" },
-  { name: "FINISHING SCHOOL", path: "#" },  
+  // { name: "FINISHING SCHOOL", path: "#" },
 ];
 
 const Header = () => {
@@ -24,7 +30,6 @@ const Header = () => {
     <div>
       <Navbar expand="lg" className="premium-navbar py-3">
         <Container fluid="xl">
-          
           {/* Logo */}
 
           <Navbar.Brand href="/">
@@ -63,7 +68,10 @@ const Header = () => {
               GET ASSESSED
             </Button>
           </div>
-          <a href="/login" className="ms-3 text-decoration-none profile-icon-link">
+          <a
+            href="/login"
+            className="ms-3 text-decoration-none profile-icon-link"
+          >
             <HiOutlineUserCircle size={32} />
           </a>
 
