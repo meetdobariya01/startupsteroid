@@ -30,20 +30,20 @@ const Footer = () => {
 
             <Col sm={4} lg={2}>
               <h5>Solutions</h5>
-              <a href="/">Deal Flow</a>
-              <a href="/">Demo Day</a>
+              <a href="/dealflow">Deal Flow</a>
+              <a href="/demoday">Demo Day</a>
             </Col>
 
             <Col sm={4} lg={3}>
               <h5>Quick Link</h5>
-              <a href="/">Blog</a>
-              <a href="/">Privacy Policy</a>
+              <a href="#">Blog</a>
+              <a href="#">Privacy Policy</a>
             </Col>
 
             <Col sm={4} lg={3}>
               <h5>Contact Us</h5>
               <p>
-                <HiOutlineMail /> info@startupsteroid.in
+                <HiOutlineMail /> info@startupsteroids.in
               </p>
               <p>
                 <HiOutlinePhone /> +91 98240 18555
@@ -54,7 +54,7 @@ const Footer = () => {
           <hr className="my-4" />
 
           <div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
-            <span>© 2025 All Rights Reserved.</span>
+            <span>© 2026 Startup Steroid. All Rights Reserved.</span>
 
             <div className="social-icons">
               <FaInstagram />
