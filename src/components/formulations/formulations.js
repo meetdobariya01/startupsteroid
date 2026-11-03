@@ -1,6 +1,7 @@
 import React from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
 import { motion } from "framer-motion";
+import { NavLink } from "react-router-dom";
 import "./formulations.css";
 
 const Formulations = () => {
@@ -10,36 +11,42 @@ const Formulations = () => {
       tag: "PAIRING",
       title: "INVESTOR MATCHMAKING",
       text: "A structured engine that pairs startups with investors based on thesis fit, cheque size, and stage.",
+      link: "/investors",
     },
     {
       no: "02",
       tag: "SUPPLY",
       title: "DEAL FLOW",
       text: "A curated, pre-vetted pipeline of Indian startups for investors seeking quality opportunities.",
+      link: "/dealflow",
     },
     {
       no: "03",
       tag: "DIAGNOSTIC",
       title: "READYSCORE AI",
       text: "An AI-driven readiness scan that scores startups on the metrics investors care about.",
+      link: "/readyscore",
     },
     {
       no: "04",
       tag: "EVENT",
       title: "DEMO DAY",
       text: "A quarterly stage where selected founders pitch live to investors and partners.",
+      link: "/demoday",
     },
     {
       no: "05",
       tag: "STRUCTURE",
       title: "SPV",
       text: "Special Purpose Vehicle structuring for compliant and efficient syndication.",
+      link: "/spv",
     },
     {
       no: "06",
       tag: "CONDITIONING",
       title: "FINISHING SCHOOL",
       text: "A hands-on program to get founders pitch-ready and ecosystem-ready.",
+      link: "#",
     },
   ];
   return (
@@ -76,9 +83,11 @@ const Formulations = () => {
                       </small>
                       <h3 className="mt-4 fw-bold">{item.title}</h3>
                       <p className="text-secondary mt-3">{item.text}</p>
-                      <a href="/" className="explore-link">
-                        EXPLORE →
-                      </a>
+                      {item.link && (
+                        <NavLink to={item.link} className="explore-link">
+                          EXPLORE →
+                        </NavLink>
+                      )}
                     </Card.Body>
                   </Card>
                 </motion.div>

@@ -1,8 +1,8 @@
-import React from "react";
+import { useEffect } from "react";
 import Header from "../../components/header/header";
 import Footer from "../../components/footer/footer";
 import { Container, Row, Col, Card, Badge } from "react-bootstrap";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaUserCheck, FaBolt, FaFileAlt, FaComments } from "react-icons/fa";
 import { FiFileText } from "react-icons/fi";
@@ -48,6 +48,15 @@ const features = [
 
 const Matchmaking = () => {
   const MotionNavLink = motion(NavLink);
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "instant", // or "smooth"
+    });
+  }, [pathname]);
 
   return (
     <div>
@@ -178,48 +187,87 @@ const Matchmaking = () => {
       <section className="cta-section">
         <Container>
           <motion.div
-            className="cta-box"
+            className="cta-box payment-cta-box"
             initial={{ opacity: 0, y: 80 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
             {/* Animated Background Circles */}
-
             <span className="shape shape1"></span>
             <span className="shape shape2"></span>
             <span className="shape shape3"></span>
 
-            <motion.h2
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 }}
-            >
-              Start Engaging Smarter
-            </motion.h2>
+            <div className="payment-cta-content">
+              <span className="payment-badge">PREMIUM INVESTOR ACCESS</span>
 
-            <motion.p
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ delay: 0.35 }}
-            >
-              Create your founder profile, check your readiness, and start
-              sharing your startup with confidence.
-            </motion.p>
+              <motion.h2
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                Invest in Opportunities.
+                <br />
+                <span>Be Part of the Future.</span>
+              </motion.h2>
 
-            <MotionNavLink
-              to="/assessed"
-              className="cta-btn text-decoration-none"
-              whileHover={{
-                scale: 1.05,
-                y: -4,
-              }}
-              whileTap={{
-                scale: 0.95,
-              }}
-            >
-              Apply as an Investor
-            </MotionNavLink>
+              <motion.p
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ delay: 0.35 }}
+              >
+                Unlock exclusive investor access, discover promising startups,
+                connect with founders, and become part of a growing innovation
+                ecosystem.
+              </motion.p>
+
+              <motion.div
+                className="payment-price-card"
+                initial={{ opacity: 0, y: 25 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.45 }}
+              >
+                <div className="payment-price-heading">
+                  <span>Investment / Registration Fee</span>
+                  <h3>₹39,999</h3>
+                </div>
+
+                <div className="payment-price-row">
+                  <span>Base Amount</span>
+                  <strong>₹39,999.00</strong>
+                </div>
+
+                <div className="payment-price-row">
+                  <span>GST (18%)</span>
+                  <strong>₹7,199.82</strong>
+                </div>
+
+                <div className="payment-total-row">
+                  <span>Total Payable</span>
+                  <strong>₹47,198.82</strong>
+                </div>
+
+                <small>Inclusive of 18% GST</small>
+              </motion.div>
+
+              <MotionNavLink
+                to="/payment"
+                className="cta-btn text-decoration-none"
+                whileHover={{
+                  scale: 1.05,
+                  y: -4,
+                }}
+                whileTap={{
+                  scale: 0.95,
+                }}
+              >
+                Proceed to Payment
+              </MotionNavLink>
+
+              <div className="payment-secure-note">
+                🔒 Secure Payment &nbsp; | &nbsp; Transparent Pricing
+              </div>
+            </div>
           </motion.div>
         </Container>
       </section>

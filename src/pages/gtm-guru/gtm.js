@@ -255,7 +255,7 @@ const Gtm = () => {
               </p>
             </motion.div>
 
-            <motion.div className="col-12" variants={itemVariants}>
+            {/* <motion.div className="col-12" variants={itemVariants}>
               <div className="gtm-actions d-flex justify-content-center align-items-center flex-wrap gap-3">
                 <motion.a
                   href="#contact"
@@ -277,7 +277,7 @@ const Gtm = () => {
                   <FaArrowDown className="ms-2 gtm-btn-icon" />
                 </motion.a>
               </div>
-            </motion.div>
+            </motion.div> */}
 
             <motion.div className="col-12" variants={itemVariants}>
               <div className="row gtm-stats justify-content-center">

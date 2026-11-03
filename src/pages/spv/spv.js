@@ -1,4 +1,5 @@
-import React from "react";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Container, Button, Row, Col } from "react-bootstrap";
 import { motion } from "framer-motion";
 import {
@@ -115,6 +116,15 @@ const cardss = [
 ];
 
 const Spv = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "instant", // or "smooth"
+    });
+  }, [pathname]);
   return (
     <div>
       {/* Header */}
@@ -157,7 +167,7 @@ const Spv = () => {
             on their portfolios.
           </motion.p>
 
-          <motion.div
+          {/* <motion.div
             className="hero-buttons"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -169,7 +179,7 @@ const Spv = () => {
             <Button variant="outline-light" className="btn-outline-custom">
               See How It Works
             </Button>
-          </motion.div>
+          </motion.div> */}
 
           <motion.div
             className="feature-pill"
