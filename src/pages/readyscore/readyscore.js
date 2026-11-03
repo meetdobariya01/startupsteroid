@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import Header from "../../components/header/header";
 import Footer from "../../components/footer/footer";
 import { Container, Row, Col } from "react-bootstrap";
@@ -77,6 +78,15 @@ const data = [
 ];
 
 const Readyscore = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "instant", // or "smooth"
+    });
+  }, [pathname]);
   useEffect(() => {
     AOS.init({
       duration: 900,

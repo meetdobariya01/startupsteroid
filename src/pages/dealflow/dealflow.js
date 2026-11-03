@@ -3,6 +3,7 @@ import Header from "../../components/header/header";
 import Footer from "../../components/footer/footer";
 import { Container, Row, Col } from "react-bootstrap";
 import { motion } from "framer-motion";
+import { useLocation } from "react-router-dom";
 import { HiOutlineDocumentText } from "react-icons/hi";
 import { BsChatLeftText, BsQuestionCircle, BsPeople } from "react-icons/bs";
 import AOS from "aos";
@@ -81,6 +82,15 @@ const outcomeData = [
   },
 ];
 const Dealflow = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "instant", // or "smooth"
+    });
+  }, [pathname]);
   return (
     <div>
       {/* Header */}

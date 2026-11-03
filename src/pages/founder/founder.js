@@ -1,7 +1,7 @@
-import React from "react";
+import { useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { motion } from "framer-motion";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import {
   FaArrowRight,
   FaLinkedinIn,
@@ -106,6 +106,15 @@ const initiatives = [
 ];
 
 const Founder = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "instant", // or "smooth"
+    });
+  }, [pathname]);
   return (
     <div>
       {/* HEADER */}
@@ -456,10 +465,11 @@ const Founder = () => {
         </section>
 
         {/* CTA SECTION */}
+
         <section className="ss-cta-section">
           <Container className="ss-container">
             <motion.div
-              className="ss-cta-box"
+              className="ss-cta-box ss-payment-cta"
               initial={{ opacity: 0, y: 35 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -469,25 +479,56 @@ const Founder = () => {
 
               <div className="ss-eyebrow">
                 <span className="ss-eyebrow-line"></span>
-                LET'S BUILD SOMETHING MEANINGFUL
+                INVEST IN YOUR NEXT BIG MOVE
               </div>
 
               <h2>
-                Your vision.
+                Take the first step.
                 <br />
-                Our ecosystem.
-                <br />
-                <span>One bigger future.</span>
+                <span>Make it happen.</span>
               </h2>
 
               <p>
-                Have an idea, a startup, or a vision worth building? Let's
-                connect and explore what's possible together.
+                Get started with our ecosystem and unlock new opportunities to
+                grow, connect, and build something meaningful.
               </p>
 
-              <NavLink to="/assessed" className="ss-btn-primary">
-                Connect With Us <FaArrowRight />
+              <div className="ss-payment-card">
+                <span className="ss-price-label">
+                  Registration / Program Fee
+                </span>
+
+                <h3>₹9,999</h3>
+
+                <div className="ss-price-divider"></div>
+
+                <div className="ss-price-row">
+                  <span>Base Amount</span>
+                  <strong>₹9,999</strong>
+                </div>
+
+                <div className="ss-price-row">
+                  <span>GST (18%)</span>
+                  <strong>₹1,799.82</strong>
+                </div>
+
+                <div className="ss-price-divider"></div>
+
+                <div className="ss-price-row ss-total-row">
+                  <span>Total Payable</span>
+                  <strong>₹11,798.82</strong>
+                </div>
+
+                <small>Inclusive of 18% GST</small>
+              </div>
+
+              <NavLink to="#" className="ss-btn-primary">
+                Proceed to Payment <FaArrowRight />
               </NavLink>
+
+              <div className="ss-payment-note">
+                <span>🔒</span> Secure Payment · Transparent Pricing
+              </div>
             </motion.div>
           </Container>
         </section>
