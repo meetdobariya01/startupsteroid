@@ -1,5 +1,6 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
+import { NavLink } from "react-router-dom";
 import {
   FaInstagram,
   FaXTwitter,
@@ -8,7 +9,7 @@ import {
   FaLinkedinIn,
 } from "react-icons/fa6";
 import { HiOutlineMail, HiOutlinePhone } from "react-icons/hi";
-import './footer.css'
+import "./footer.css";
 
 const Footer = () => {
   return (
@@ -30,8 +31,8 @@ const Footer = () => {
 
             <Col sm={4} lg={2}>
               <h5>Solutions</h5>
-              <a href="/dealflow">Deal Flow</a>
-              <a href="/demoday">Demo Day</a>
+              <NavLink to="/dealflow">Deal Flow</NavLink>
+              <NavLink to="/demoday">Demo Day</NavLink>
             </Col>
 
             <Col sm={4} lg={3}>

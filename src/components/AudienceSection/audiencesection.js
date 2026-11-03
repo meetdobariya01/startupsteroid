@@ -1,7 +1,8 @@
 import React from "react";
 import { Container, Button } from "react-bootstrap";
 import { motion } from "framer-motion";
-import './audiencesection.css'
+import { NavLink } from "react-router-dom";
+import "./audiencesection.css";
 
 const Audiencesection = () => {
   return (
@@ -36,8 +37,18 @@ const Audiencesection = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
           >
-            <Button className="px-5 py-3" variant="outline-light">Investors</Button>
             <Button
+              as={NavLink}
+              to="/investors"
+              className="px-5 py-3"
+              variant="outline-light"
+            >
+              Investors
+            </Button>
+
+            <Button
+              as={NavLink}
+              to="/founder"
               variant="outline-danger"
               className="px-5 py-3 secondary-btn"
             >

@@ -8,7 +8,7 @@ const { initGridFS } = require('./config/gridfs');
 require('dotenv').config();
 
 const adminRoutes = require('./routes/admin.routes');
-
+const paymentRoutes = require('./routes/payment');
 const app = express();
 
 // Connect to Database
@@ -58,6 +58,8 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/files', require('./routes/fileRoutes'));
 app.use('/api/admin', adminRoutes);
+app.use("/api/payment", paymentRoutes); 
+
 // Health Check
 app.get('/health', (req, res) => {
   res.json({

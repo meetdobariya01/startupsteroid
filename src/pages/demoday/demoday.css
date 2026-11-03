@@ -444,7 +444,7 @@
   overflow: hidden;
   /* background: #08090d; */
   color: #ffffff;
-  font-family: "Poppins", sans-serif;
+  /* font-family: "Poppins", sans-serif; */
   isolation: isolate;
 }
 
@@ -749,7 +749,7 @@
   overflow: hidden;
   /* background: #090a0e; */
   color: #ffffff;
-  font-family: "Poppins", sans-serif;
+  /* font-family: "Poppins", sans-serif; */
 }
 
 .organizer-container {
@@ -954,7 +954,7 @@
   border-radius: 7px;
   background: #ffffff;
   color: #92002f;
-  font-family: inherit;
+  /* font-family: inherit; */
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
