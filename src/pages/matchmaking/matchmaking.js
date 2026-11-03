@@ -2,6 +2,7 @@ import React from "react";
 import Header from "../../components/header/header";
 import Footer from "../../components/footer/footer";
 import { Container, Row, Col, Card, Badge } from "react-bootstrap";
+import { NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaUserCheck, FaBolt, FaFileAlt, FaComments } from "react-icons/fa";
 import { FiFileText } from "react-icons/fi";
@@ -46,6 +47,8 @@ const features = [
 ];
 
 const Matchmaking = () => {
+  const MotionNavLink = motion(NavLink);
+
   return (
     <div>
       {/* Header */}
@@ -204,8 +207,9 @@ const Matchmaking = () => {
               sharing your startup with confidence.
             </motion.p>
 
-            <motion.button
-              className="cta-btn"
+            <MotionNavLink
+              to="/assessed"
+              className="cta-btn text-decoration-none"
               whileHover={{
                 scale: 1.05,
                 y: -4,
@@ -215,7 +219,7 @@ const Matchmaking = () => {
               }}
             >
               Apply as an Investor
-            </motion.button>
+            </MotionNavLink>
           </motion.div>
         </Container>
       </section>

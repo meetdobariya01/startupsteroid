@@ -1,6 +1,7 @@
 import React from "react";
 import { Container, Row, Col, Button, Card } from "react-bootstrap";
 import { motion } from "framer-motion";
+import { NavLink } from "react-router-dom";
 import "./herosec.css";
 
 const Herosec = () => {
@@ -36,11 +37,12 @@ const Herosec = () => {
                   and the investors who back them.
                 </p>
 
-                <div className="d-flex flex-wrap gap-3 mt-4">
-                  <Button variant="danger" size="">
+                <div className="d-flex flex-wrap gap-3 mt-4 justify-content-center">
+                  <Button as={NavLink} to="/readyscore" variant="danger">
                     GET YOUR READYSCORE
                   </Button>
-                  <Button variant="outline-light" size="">
+
+                  <Button as={NavLink} to="/investors" variant="outline-light">
                     EXPLORE FOR INVESTORS
                   </Button>
                 </div>

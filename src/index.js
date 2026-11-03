@@ -20,6 +20,7 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import Gtm from "./pages/gtm-guru/gtm";
 import AdminRoute from "./components/AdminRoute/AdminRoute";
 import Demoday from "./pages/demoday/demoday";
+import Founder from "./pages/founder/founder";
 // import AdminDashboard from "./components/AdminRoute/AdminDashboard";
 // import AdminLogin from "./pages/adminLogin/AdminLogin";
 
@@ -33,14 +34,15 @@ root.render(
         <Route path="/signup" element={<Signup />} />
         <Route path="/assessed" element={<Assessed />} />
         <Route path="/documation" element={<Documation />} />
-        <Route path="/matchmaking" element={<Matchmaking />} />
+        <Route path="/investors" element={<Matchmaking />} />
         <Route path="/dealflow" element={<Dealflow />} />
         <Route path="/readyscore" element={<Readyscore />} />
         <Route path="/spv" element={<Spv />} />
         <Route path="/gtm-guru" element={<Gtm />} />
         <Route path="/demoday" element={<Demoday />} />
         <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin-login" element={<AdminLogin />} />
+        <Route path="/admin-login" element={<AdminLogin />} />.
+        <Route path="/founder" element={<Founder />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         {/* ✅ /admin/* covers /admin, /admin/users, /admin/verification, etc. */}
         <Route
