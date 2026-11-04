@@ -1,13 +1,14 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Header from "../../components/header/header";
 import Footer from "../../components/footer/footer";
-import { Container, Row, Col, Card, Badge } from "react-bootstrap";
-import { NavLink, useLocation } from "react-router-dom";
+import { Container, Row, Col, Card, Badge, Spinner } from "react-bootstrap";
+import { useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaUserCheck, FaBolt, FaFileAlt, FaComments } from "react-icons/fa";
 import { FiFileText } from "react-icons/fi";
 import "./matchmaking.css";
 import Contactform from "../../components/contactform/contactform";
+import { createOrder, verifyPayment } from "../../services/paymentService";
 
 const benefits = [
   {
@@ -27,6 +28,7 @@ const benefits = [
     text: "Spend more time evaluating and less time chasing information.",
   },
 ];
+
 const features = [
   {
     icon: <FaUserCheck />,
@@ -46,17 +48,91 @@ const features = [
   },
 ];
 
+// Razorpay Script Loader
+const loadRazorpayScript = () =>
+  new Promise((resolve) => {
+    if (window.Razorpay) return resolve(true);
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+
 const Matchmaking = () => {
-  const MotionNavLink = motion(NavLink);
   const { pathname } = useLocation();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     window.scrollTo({
       top: 0,
       left: 0,
-      behavior: "instant", // or "smooth"
+      behavior: "instant",
     });
   }, [pathname]);
+
+  const handlePayment = async () => {
+    setError("");
+    setLoading(true);
+
+    try {
+      // 1. Load Razorpay SDK
+      const loaded = await loadRazorpayScript();
+      if (!loaded) throw new Error("Failed to load Razorpay. Check your network.");
+
+      // 2. Create order on backend (Passing the exact amount for this page: 47,198.82)
+      const order = await createOrder(4719882); // 47,198.82 in paise
+
+      // 3. Open Razorpay checkout
+      const options = {
+        key: order.keyId,
+        amount: order.amount,
+        currency: order.currency,
+        name: "Startup Steroid",
+        description: "Premium Investor Access",
+        order_id: order.orderId,
+        image: "/logo.png",
+        handler: async (response) => {
+          try {
+            const result = await verifyPayment(response);
+            if (result.success) {
+              // Redirect to the external form after successful verification
+              window.location.href = `https://form.startupsteroids.in/login?paymentId=${response.razorpay_payment_id}`;
+            } else {
+              setError("Payment verification failed. Please contact support.");
+            }
+          } catch (err) {
+            setError("Verification error. If money was deducted, contact support.");
+          } finally {
+            setLoading(false);
+          }
+        },
+        prefill: {
+          name: "",
+          email: "",
+          contact: "",
+        },
+        notes: { product: "Investor Access" },
+        theme: { color: "#f97316" }, // Matches your accent color
+        modal: {
+          ondismiss: () => setLoading(false),
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+
+      rzp.on("payment.failed", (resp) => {
+        setError(resp.error?.description || "Payment failed. Please try again.");
+        setLoading(false);
+      });
+
+      rzp.open();
+    } catch (err) {
+      setError(err.message || "Could not initiate payment.");
+      setLoading(false);
+    }
+  };
 
   return (
     <div>
@@ -100,13 +176,13 @@ const Matchmaking = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
                 >
-                  <Card className="benefit-card h-100  shadow-sm text-center">
+                  <Card className="benefit-card h-100 shadow-sm text-center">
                     <Card.Body className="p-4">
                       <div className="icon-box-matchmaking mx-auto mb-3">
                         <FiFileText />
                       </div>
                       <h5 className="fw-bold">{item.title}</h5>
-                      <p className=" mb-0">{item.text}</p>
+                      <p className="mb-0">{item.text}</p>
                     </Card.Body>
                   </Card>
                 </motion.div>
@@ -160,7 +236,6 @@ const Matchmaking = () => {
             </Col>
 
             {/* Right Side */}
-
             <Col lg={7}>
               {features.map((item, index) => (
                 <motion.div
@@ -175,7 +250,6 @@ const Matchmaking = () => {
                   viewport={{ once: true }}
                 >
                   <div className="icon-box-matchmaking2">{item.icon}</div>
-
                   <h5>{item.title}</h5>
                 </motion.div>
               ))}
@@ -250,19 +324,32 @@ const Matchmaking = () => {
                 <small>Inclusive of 18% GST</small>
               </motion.div>
 
-              <MotionNavLink
-                to="/payment"
-                className="cta-btn text-decoration-none"
-                whileHover={{
-                  scale: 1.05,
-                  y: -4,
+              {/* ERROR MESSAGE */}
+              {error && <div className="ss-payment-error" style={{ color: '#ff4d4f', marginBottom: '15px', fontWeight: 'bold' }}>⚠️ {error}</div>}
+
+              {/* PAYMENT BUTTON */}
+              <motion.button
+                onClick={handlePayment}
+                disabled={loading}
+                className="cta-btn text-decoration-none border-0"
+                style={{
+                  opacity: loading ? 0.7 : 1,
+                  cursor: loading ? "not-allowed" : "pointer",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
                 }}
-                whileTap={{
-                  scale: 0.95,
-                }}
+                whileHover={{ scale: loading ? 1 : 1.05, y: loading ? 0 : -4 }}
+                whileTap={{ scale: loading ? 1 : 0.95 }}
               >
-                Proceed to Payment
-              </MotionNavLink>
+                {loading ? (
+                  <>
+                    <Spinner animation="border" size="sm" /> Processing…
+                  </>
+                ) : (
+                  "Proceed to Payment"
+                )}
+              </motion.button>
 
               <div className="payment-secure-note">
                 🔒 Secure Payment &nbsp; | &nbsp; Transparent Pricing

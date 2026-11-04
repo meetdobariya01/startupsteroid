@@ -1,317 +1,244 @@
-// BackEnd/controllers/authController.js
-const User = require('../models/User');
-const jwt = require('jsonwebtoken');
+const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
+const { OAuth2Client } = require("google-auth-library");
 
-// ─────────────────────────────────────────────
-// Default verification sections for new users
-// ─────────────────────────────────────────────
-const DEFAULT_SECTIONS = [
-  'brandDescription',
-  'companyLogo',
-  'aadhaarDetails',
-  'panDetails',
-  'gstDetails',
-  'bankDetails',
-  'contactInfo',
-  'businessInfo',
-];
+const User = require("../models/User");
+const {
+  signAccessToken,
+  signRefreshToken,
+  hashToken,
+} = require("../utils/generateTokens");
+const { encrypt, decrypt } = require("../utils/encryption");
 
-const defaultVerification = () => {
-  const v = {};
-  DEFAULT_SECTIONS.forEach((k) => {
-    v[k] = { status: 'pending', reason: '' };
-  });
-  v.overallStatus = 'pending';
-  return v;
+const MAX_ATTEMPTS = 5;
+const LOCK_TIME_MS = 15 * 60 * 1000;
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+// ─── Cookie options ───
+const refreshCookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "strict",
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+  path: "/api/auth", // ✅ FIXED: Was "/api/auth/refresh"
 };
 
-// ─────────────────────────────────────────────
-// Helpers
-// ─────────────────────────────────────────────
-const generateToken = (user) => {
-  return jwt.sign(
-    {
-      id: user._id,
-      role: user.role,
-      email: user.email,
-    },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRE || '7d' }
-  );
-};
-
-const sendTokenResponse = (user, statusCode, res) => {
-  const token = generateToken(user);
-
-  res.status(statusCode).json({
-    success: true,
-    token,
-    user: {
-      id: user._id,
-      username: user.username,
-      email: user.email,
-      mobile: user.mobile,
-      role: user.role,
-      isVerified: user.isVerified,
-      verification: user.verification, // ✅ new: include verification
-    },
-  });
-};
-
-// ─────────────────────────────────────────────
-// SIGNUP
-// ─────────────────────────────────────────────
-const signup = async (req, res) => {
+// ─── Helpers ───
+function safeDecrypt(value) {
+  if (!value) return "";
   try {
-    const { username, email, mobile, password, confirmPassword } = req.body;
+    return decrypt(value);
+  } catch {
+    return "";
+  }
+}
 
-    if (password !== confirmPassword) {
-      return res.status(400).json({
-        success: false,
-        message: 'Passwords do not match',
-      });
+function publicUser(user) {
+  return {
+    id: user._id,
+    email: user.email,
+    firstName: safeDecrypt(user.firstName),
+    lastName: safeDecrypt(user.lastName),
+    role: user.role,
+    avatar: user.avatar || null,
+    authProvider: user.authProvider,
+    isProfileComplete: !!user.isProfileComplete,
+  };
+}
+
+// ─── SIGNUP ───
+exports.signup = async (req, res, next) => {
+  try {
+    const { firstName, lastName, email, password } = req.body;
+
+    if (!firstName || !lastName) {
+      return res.status(400).json({ message: "First name and last name are required" });
     }
 
-    const existingUser = await User.findOne({
-      $or: [{ email }, { username }, { mobile }],
-    });
+    const existing = await User.findOne({ email });
+    if (existing) return res.status(409).json({ message: "Email already registered" });
 
-    if (existingUser) {
-      let message = 'User already exists';
-      if (existingUser.email === email) message = 'Email already registered';
-      if (existingUser.username === username) message = 'Username already taken';
-      if (existingUser.mobile === mobile) message = 'Mobile number already registered';
-
-      return res.status(400).json({ success: false, message });
-    }
-
-    // ✅ pre('save') will hash the plaintext password
-    // ✅ Initialize verification sections so admin panel shows this user
     const user = await User.create({
-      username,
+      firstName: encrypt(firstName.trim()),
+      lastName: encrypt(lastName.trim()),
       email,
-      mobile,
       password,
-      verification: defaultVerification(),
+      authProvider: "local",
+      isProfileComplete: false, 
     });
 
-    sendTokenResponse(user, 201, res);
-  } catch (error) {
-    console.error('❌ Signup Error:', error);
+    const accessToken = signAccessToken(user);
+    const jti = crypto.randomUUID();
+    const refreshToken = signRefreshToken(user, jti);
 
-    if (error.name === 'ValidationError') {
-      const errors = Object.values(error.errors).map((e) => e.message);
-      return res.status(400).json({
-        success: false,
-        message: 'Validation error',
-        errors,
-      });
-    }
+    user.refreshTokenHash = hashToken(refreshToken);
+    await user.save({ validateBeforeSave: false });
 
-    if (error.code === 11000) {
-      const field = Object.keys(error.keyPattern)[0];
-      return res.status(400).json({
-        success: false,
-        message: `${field} already exists`,
-      });
-    }
-
-    res.status(500).json({
-      success: false,
-      message: 'Error creating user',
-      error:
-        process.env.NODE_ENV === 'development' ? error.message : undefined,
-    });
+    res.cookie("refreshToken", refreshToken, refreshCookieOptions);
+    res.status(201).json({ accessToken, user: publicUser(user) });
+  } catch (err) {
+    next(err);
   }
 };
 
-// ─────────────────────────────────────────────
-// LOGIN
-// ─────────────────────────────────────────────
-const login = async (req, res) => {
+// ─── LOGIN ───
+exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: 'Email and password are required',
-      });
-    }
-
-    const user = await User.findOne({
-      $or: [{ email: email.toLowerCase() }, { username: email }],
-    }).select('+password');
+    const user = await User.findOne({ email }).select("+password +refreshTokenHash");
 
     if (!user) {
+      await new Promise((r) => setTimeout(r, 300));
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    if (!user.password) {
       return res.status(401).json({
-        success: false,
-        message: 'Invalid credentials',
+        message: "This account was created with Google. Please sign in with Google.",
       });
     }
 
-    if (user.lockUntil && user.lockUntil > Date.now()) {
-      const remainingTime = Math.ceil((user.lockUntil - Date.now()) / 60000);
-      return res.status(403).json({
-        success: false,
-        message: `Account is locked. Please try again after ${remainingTime} minutes`,
-      });
+    if (user.isLocked()) {
+      return res.status(423).json({ message: "Account locked. Try again later." });
     }
 
-    const isPasswordMatch = await user.comparePassword(password);
-
-    if (!isPasswordMatch) {
-      await user.incrementLoginAttempts();
-      const remainingAttempts = Math.max(
-        0,
-        5 - ((user.loginAttempts || 0) + 1)
-      );
-      return res.status(401).json({
-        success: false,
-        message: `Invalid credentials. ${remainingAttempts} attempts remaining`,
-      });
-    }
-
-    // ✅ Reset counters via updateOne — skips save() and pre('save')
-    await User.updateOne(
-      { _id: user._id },
-      {
-        $set: { loginAttempts: 0, lastLogin: new Date() },
-        $unset: { lockUntil: 1 },
+    const ok = await user.comparePassword(password);
+    if (!ok) {
+      user.failedLoginAttempts += 1;
+      if (user.failedLoginAttempts >= MAX_ATTEMPTS) {
+        user.lockUntil = new Date(Date.now() + LOCK_TIME_MS);
+        user.failedLoginAttempts = 0;
       }
-    );
+      await user.save({ validateBeforeSave: false });
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
 
-    // Reflect updates in the local doc for the response payload
-    user.loginAttempts = 0;
-    user.lockUntil = undefined;
-    user.lastLogin = new Date();
+    user.failedLoginAttempts = 0;
+    user.lockUntil = null;
 
-    sendTokenResponse(user, 200, res);
-  } catch (error) {
-    console.error('❌ Login Error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error during login',
-      error:
-        process.env.NODE_ENV === 'development' ? error.message : undefined,
-    });
+    const accessToken = signAccessToken(user);
+    const jti = crypto.randomUUID();
+    const refreshToken = signRefreshToken(user, jti);
+    user.refreshTokenHash = hashToken(refreshToken);
+    await user.save({ validateBeforeSave: false });
+
+    res.cookie("refreshToken", refreshToken, refreshCookieOptions);
+    res.json({ accessToken, user: publicUser(user) });
+  } catch (err) {
+    next(err);
   }
 };
 
-// ─────────────────────────────────────────────
-// GET ME
-// ─────────────────────────────────────────────
-const getMe = async (req, res) => {
+// ─── GOOGLE LOGIN ───
+exports.googleLogin = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user.id);
-    res.status(200).json({ success: true, user });
-  } catch (error) {
-    console.error('❌ GetMe Error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error fetching user data',
+    const { credential } = req.body;
+
+    if (!credential) {
+      return res.status(400).json({ message: "Missing Google credential" });
+    }
+
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
     });
-  }
-};
 
-// ─────────────────────────────────────────────
-// CHANGE PASSWORD
-// ─────────────────────────────────────────────
-const changePassword = async (req, res) => {
-  try {
-    const { currentPassword, newPassword } = req.body;
+    const payload = ticket.getPayload();
+    const { sub: googleId, email, given_name, family_name, picture, email_verified } = payload;
 
-    const user = await User.findById(req.user.id).select('+password');
+    if (!email || !email_verified) {
+      return res.status(400).json({ message: "Google account email is not verified" });
+    }
 
-    const isMatch = await user.comparePassword(currentPassword);
+    let user = await User.findOne({
+      $or: [{ googleId }, { email: email.toLowerCase() }],
+    }).select("+refreshTokenHash");
 
-    if (!isMatch) {
-      return res.status(401).json({
-        success: false,
-        message: 'Current password is incorrect',
+    if (!user) {
+      user = await User.create({
+        firstName: encrypt((given_name || "User").trim()),
+        lastName: encrypt((family_name || "Account").trim()),
+        email: email.toLowerCase(),
+        googleId,
+        authProvider: "google",
+        avatar: picture || "",
+        isProfileComplete: false, 
       });
+    } else {
+      if (!user.googleId) {
+        user.googleId = googleId;
+        if (!user.avatar && picture) user.avatar = picture;
+      }
+      if (user.authProvider !== "google" && !user.password) {
+        user.authProvider = "google";
+      }
+      if (user.isLocked()) {
+        return res.status(423).json({ message: "Account locked. Try again later." });
+      }
+      await user.save({ validateBeforeSave: false });
     }
 
-    user.password = newPassword; // ✅ gets hashed by pre('save')
-    user.passwordChangedAt = Date.now();
-    await user.save();
+    const accessToken = signAccessToken(user);
+    const jti = crypto.randomUUID();
+    const refreshToken = signRefreshToken(user, jti);
+    user.refreshTokenHash = hashToken(refreshToken);
+    await user.save({ validateBeforeSave: false });
 
-    sendTokenResponse(user, 200, res);
-  } catch (error) {
-    console.error('❌ ChangePassword Error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error changing password',
-    });
+    res.cookie("refreshToken", refreshToken, refreshCookieOptions);
+    res.json({ accessToken, user: publicUser(user) });
+  } catch (err) {
+    console.error("❌ Google login error:", err.message);
+    return res.status(401).json({ message: "Google authentication failed" });
   }
 };
 
-// ─────────────────────────────────────────────
-// UPDATE PROFILE
-// ─────────────────────────────────────────────
-const updateProfile = async (req, res) => {
+// ─── REFRESH ───
+exports.refresh = async (req, res, next) => {
   try {
-    const { username, email, mobile } = req.body;
+    const token = req.cookies?.refreshToken;
+    if (!token) return res.status(401).json({ message: "No refresh token" });
 
-    const existingUser = await User.findOne({
-      $and: [
-        { _id: { $ne: req.user.id } },
-        { $or: [{ email }, { username }, { mobile }] },
-      ],
-    });
+    const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
 
-    if (existingUser) {
-      let message = 'User already exists';
-      if (existingUser.email === email) message = 'Email already registered';
-      if (existingUser.username === username) message = 'Username already taken';
-      if (existingUser.mobile === mobile) message = 'Mobile number already registered';
+    const user = await User.findById(decoded.sub).select("+refreshTokenHash");
+    if (!user) return res.status(401).json({ message: "Invalid session" });
 
-      return res.status(400).json({ success: false, message });
+    if (user.refreshTokenHash !== hashToken(token))
+      return res.status(401).json({ message: "Token reuse detected" });
+
+    const newJti = crypto.randomUUID();
+    const newAccess = signAccessToken(user);
+    const newRefresh = signRefreshToken(user, newJti);
+    user.refreshTokenHash = hashToken(newRefresh);
+    await user.save({ validateBeforeSave: false });
+
+    res.cookie("refreshToken", newRefresh, refreshCookieOptions);
+    res.json({ accessToken: newAccess, user: publicUser(user) });
+  } catch (err) {
+    return res.status(401).json({ message: "Invalid refresh token" });
+  }
+};
+
+// ─── LOGOUT ───
+exports.logout = async (req, res) => {
+  try {
+    const token = req.cookies?.refreshToken;
+    if (token) {
+      const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET, {
+        ignoreExpiration: true,
+      });
+      await User.findByIdAndUpdate(decoded.sub, { refreshTokenHash: null });
     }
-
-    const user = await User.findByIdAndUpdate(
-      req.user.id,
-      { username, email, mobile },
-      { new: true, runValidators: true }
-    );
-
-    res.status(200).json({
-      success: true,
-      message: 'Profile updated successfully',
-      user,
-    });
-  } catch (error) {
-    console.error('❌ UpdateProfile Error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error updating profile',
-    });
-  }
+  } catch (_) {}
+  
+  // ✅ FIXED: Path must match cookie options exactly
+  res.clearCookie("refreshToken", { path: "/api/auth" });
+  res.json({ message: "Logged out" });
 };
 
-// ─────────────────────────────────────────────
-// LOGOUT
-// ─────────────────────────────────────────────
-const logout = async (req, res) => {
-  try {
-    res.status(200).json({
-      success: true,
-      message: 'Logged out successfully',
-    });
-  } catch (error) {
-    console.error('❌ Logout Error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error during logout',
-    });
-  }
-};
-
-module.exports = {
-  signup,
-  login,
-  getMe,
-  changePassword,
-  updateProfile,
-  logout,
+// ─── CURRENT USER ───
+exports.me = async (req, res) => {
+  res.json({ user: publicUser(req.user) });
 };

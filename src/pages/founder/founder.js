@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   FaArrowRight,
-  FaLinkedinIn,
   FaLightbulb,
   FaRocket,
   FaHandshake,
@@ -93,14 +92,17 @@ const loadRazorpayScript = () =>
   });
 
 const Founder = () => {
-  const { pathname } = useLocation();
+  const location = useLocation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // ✅ Extract applicationId passed from the form
+  const applicationId = location.state?.applicationId;
+
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-  }, [pathname]);
+  }, [location.pathname]);
 
   const handlePayment = async () => {
     setError("");
@@ -125,9 +127,14 @@ const Founder = () => {
         image: "/logo.png", // optional
         handler: async (response) => {
           try {
-            const result = await verifyPayment(response);
+            // ✅ Pass the applicationId to the verification endpoint
+            const result = await verifyPayment({ 
+              ...response, 
+              applicationId 
+            });
+            
             if (result.success) {
-              navigate("https://form.startupsteroids.in/login", {
+              navigate("/dashboard", {
                 state: {
                   paymentId: response.razorpay_payment_id,
                   orderId: response.razorpay_order_id,
@@ -174,7 +181,7 @@ const Founder = () => {
       <Header />
 
       <main className="ss-founder-page">
-        {/* HERO SECTION (unchanged) */}
+        {/* HERO SECTION */}
         <section className="ss-hero">
           <div className="ss-hero-grid"></div>
           <div className="ss-glow ss-glow-one"></div>
@@ -238,6 +245,88 @@ const Founder = () => {
           </Container>
         </section>
 
+        {/* CTA / PAYMENT */}
+        <section className="ss-cta-section">
+          <Container className="ss-container">
+            <motion.div
+              className="ss-cta-box ss-payment-cta"
+              initial={{ opacity: 0, y: 35 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+            >
+              <div className="ss-cta-decoration"></div>
+
+              <div className="ss-eyebrow">
+                <span className="ss-eyebrow-line"></span>
+                INVEST IN YOUR NEXT BIG MOVE
+              </div>
+
+              <h2>
+                Take the first step.
+                <br />
+                <span>Make it happen.</span>
+              </h2>
+
+              <p>
+                Get started with our ecosystem and unlock new opportunities to
+                grow, connect, and build something meaningful.
+              </p>
+
+              <div className="ss-payment-card">
+                <span className="ss-price-label">
+                  Registration / Program Fee
+                </span>
+                <h3>₹9,999</h3>
+                <div className="ss-price-divider"></div>
+                <div className="ss-price-row">
+                  <span>Base Amount</span>
+                  <strong>₹9,999</strong>
+                </div>
+                <div className="ss-price-row">
+                  <span>GST (18%)</span>
+                  <strong>₹1,799.82</strong>
+                </div>
+                <div className="ss-price-divider"></div>
+                <div className="ss-price-row ss-total-row">
+                  <span>Total Payable</span>
+                  <strong>₹11,798.82</strong>
+                </div>
+                <small>Inclusive of 18% GST</small>
+              </div>
+
+              {error && <div className="ss-payment-error">⚠️ {error}</div>}
+
+              <button
+                onClick={handlePayment}
+                disabled={loading}
+                className="ss-btn-primary"
+                style={{
+                  opacity: loading ? 0.7 : 1,
+                  cursor: loading ? "not-allowed" : "pointer",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                }}
+              >
+                {loading ? (
+                  <>
+                    <Spinner animation="border" size="sm" /> Processing…
+                  </>
+                ) : (
+                  <>
+                    Proceed to Payment <FaArrowRight />
+                  </>
+                )}
+              </button>
+
+              <div className="ss-payment-note">
+                <FaLock style={{ marginRight: 6 }} />
+                Secure Payment · Transparent Pricing
+              </div>
+            </motion.div>
+          </Container>
+        </section>
         {/* VISION SECTION */}
         <section className="ss-section ss-vision-section" id="our-vision">
           <Container className="ss-container">
@@ -421,88 +510,6 @@ const Founder = () => {
           </Container>
         </section>
 
-        {/* CTA / PAYMENT */}
-        <section className="ss-cta-section">
-          <Container className="ss-container">
-            <motion.div
-              className="ss-cta-box ss-payment-cta"
-              initial={{ opacity: 0, y: 35 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-            >
-              <div className="ss-cta-decoration"></div>
-
-              <div className="ss-eyebrow">
-                <span className="ss-eyebrow-line"></span>
-                INVEST IN YOUR NEXT BIG MOVE
-              </div>
-
-              <h2>
-                Take the first step.
-                <br />
-                <span>Make it happen.</span>
-              </h2>
-
-              <p>
-                Get started with our ecosystem and unlock new opportunities to
-                grow, connect, and build something meaningful.
-              </p>
-
-              <div className="ss-payment-card">
-                <span className="ss-price-label">
-                  Registration / Program Fee
-                </span>
-                <h3>₹9,999</h3>
-                <div className="ss-price-divider"></div>
-                <div className="ss-price-row">
-                  <span>Base Amount</span>
-                  <strong>₹9,999</strong>
-                </div>
-                <div className="ss-price-row">
-                  <span>GST (18%)</span>
-                  <strong>₹1,799.82</strong>
-                </div>
-                <div className="ss-price-divider"></div>
-                <div className="ss-price-row ss-total-row">
-                  <span>Total Payable</span>
-                  <strong>₹11,798.82</strong>
-                </div>
-                <small>Inclusive of 18% GST</small>
-              </div>
-
-              {error && <div className="ss-payment-error">⚠️ {error}</div>}
-
-              <button
-                onClick={handlePayment}
-                disabled={loading}
-                className="ss-btn-primary"
-                style={{
-                  opacity: loading ? 0.7 : 1,
-                  cursor: loading ? "not-allowed" : "pointer",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                }}
-              >
-                {loading ? (
-                  <>
-                    <Spinner animation="border" size="sm" /> Processing…
-                  </>
-                ) : (
-                  <>
-                    Proceed to Payment <FaArrowRight />
-                  </>
-                )}
-              </button>
-
-              <div className="ss-payment-note">
-                <FaLock style={{ marginRight: 6 }} />
-                Secure Payment · Transparent Pricing
-              </div>
-            </motion.div>
-          </Container>
-        </section>
       </main>
 
       <Footer />

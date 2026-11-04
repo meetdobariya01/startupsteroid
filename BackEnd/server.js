@@ -9,21 +9,9 @@ require('dotenv').config();
 
 const adminRoutes = require('./routes/admin.routes');
 const paymentRoutes = require('./routes/payment');
-const app = express();
+const applicationRoutes = require('./routes/applicationRoutes');
 
-// Connect to Database
-const startApp = async () => {
-  try {
-    await connectDB();
-    console.log('MongoDB connected successfully');
-    await initGridFS();
-    
-  } catch (error) {
-    console.error('Failed to initialize:', error);
-    process.exit(1);
-  }
-};
-startApp(); 
+const app = express();
 
 // Middleware
 app.use(helmet());
@@ -58,7 +46,10 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/files', require('./routes/fileRoutes'));
 app.use('/api/admin', adminRoutes);
-app.use("/api/payment", paymentRoutes); 
+app.use('/api/payment', paymentRoutes); 
+
+// ✅ FIX 1: Singular '/api/application' to match your frontend request
+app.use('/api/application', applicationRoutes); 
 
 // Health Check
 app.get('/health', (req, res) => {
@@ -98,9 +89,24 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start Server
+// ✅ FIX 2: Start Server safely (waits for DB before listening)
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
 
-});
+const startApp = async () => {
+  try {
+    await connectDB();
+    console.log('MongoDB connected successfully');
+    await initGridFS();
+    
+    // Start listening ONLY after DB is ready
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+
+  } catch (error) {
+    console.error('Failed to initialize:', error);
+    process.exit(1);
+  }
+};
+
+startApp(); 
