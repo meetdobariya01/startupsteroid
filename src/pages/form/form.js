@@ -1,12 +1,12 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Row, Col, Form, Button, ProgressBar } from "react-bootstrap";
 import PhoneInput from "react-phone-input-2";
-import { getData } from "country-list"; 
+import { getData } from "country-list";
 import {
   FaArrowLeft, FaArrowRight, FaCheck, FaCloudUploadAlt, FaFilePdf,
   FaFilePowerpoint, FaTrash, FaBuilding, FaUser, FaChartLine, FaAlignLeft,
-  FaFileAlt, FaLinkedinIn,
+  FaFileAlt, FaLinkedinIn, FaSave
 } from "react-icons/fa";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -59,9 +59,24 @@ const MAX_FILES = 5;
 function StartupApplicationForm() {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState(initialFormData);
+  
+  // ✅ Load from localStorage on initial render
+  const [formData, setFormData] = useState(() => {
+    const saved = localStorage.getItem("startup_form_draft");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        return { ...initialFormData, ...parsed, pitchDeck: [] }; // Always reset pitchDeck
+      } catch (e) {
+        return initialFormData;
+      }
+    }
+    return initialFormData;
+  });
+
   const [errors, setErrors] = useState({});
   const [dragActive, setDragActive] = useState(false);
+  const [showDraftBanner, setShowDraftBanner] = useState(false);
 
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
@@ -69,6 +84,26 @@ function StartupApplicationForm() {
   const [uploadPct, setUploadPct] = useState(0);
 
   const fileInputRef = useRef(null);
+
+  // ✅ Auto-save to localStorage whenever formData changes
+  useEffect(() => {
+    // Check if form has any data to avoid saving an empty form on first load
+    const hasData = Object.keys(formData).some((key) => {
+      if (key === "pitchDeck") return false;
+      return formData[key] && formData[key].toString().trim() !== "";
+    });
+
+    if (hasData) {
+      const dataToSave = { ...formData };
+      delete dataToSave.pitchDeck;
+      localStorage.setItem("startup_form_draft", JSON.stringify(dataToSave));
+      setShowDraftBanner(true);
+      
+      // Hide the banner after 3 seconds
+      const timeout = setTimeout(() => setShowDraftBanner(false), 3000);
+      return () => clearTimeout(timeout);
+    }
+  }, [formData]);
 
   const updateField = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -202,11 +237,11 @@ function StartupApplicationForm() {
         message: "Application saved! Redirecting to payment...",
       });
 
-      // ✅ Redirect to Payment Page and pass applicationId
+      // ✅ Clear the draft since submission was successful
+      localStorage.removeItem("startup_form_draft");
+
       setTimeout(() => {
-        navigate("/founder", { 
-          state: { applicationId: data.applicationId } 
-        });
+        navigate("/founder", { state: { applicationId: data.applicationId } });
       }, 2000);
 
     } catch (err) {
@@ -239,6 +274,17 @@ function StartupApplicationForm() {
           <h1>Tell Us About <span>Your Company</span></h1>
           <p>Complete the application below to help us understand your company, product and funding requirements.</p>
         </motion.div>
+
+        {/* ✅ Draft Saved Indicator */}
+        {showDraftBanner && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            style={{ textAlign: "center", color: "#10b981", marginBottom: "1rem", fontSize: "0.9rem", fontWeight: "600" }}
+          >
+            <FaSave /> Draft saved automatically
+          </motion.div>
+        )}
 
         <div className="startup-form-wrapper">
           <div className="form-progress-wrapper">
