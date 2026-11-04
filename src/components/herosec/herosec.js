@@ -25,25 +25,25 @@ const Herosec = () => {
                 transition={{ duration: 0.7 }}
               >
                 <p className="hero-tag">● RX FOR INDIAN STARTUPS</p>
-                <h1 className="hero-title">
-                  GROWTH,
-                  <br />
-                  PRESCRIBED <br />
-                  <span>IN DOSES.</span>
+                <h1 className="hero-title-home text-uppercase">
+                  Your Startup. Properly Registered. Legally Structured.
+                  <span> Ready to Grow.</span>
                 </h1>
 
                 <p className="hero-text">
-                  Startup Steroid India is the acceleration stack for founders
-                  and the investors who back them.
+                  From business incorporation to government registrations, legal
+                  documentation and ongoing compliance, Startup Steroids helps
+                  entrepreneurs build and scale their businesses with
+                  confidence.
                 </p>
 
                 <div className="d-flex flex-wrap gap-3 mt-4 justify-content-center">
-                  <Button as={NavLink} to="/readyscore" variant="danger">
-                    GET YOUR READYSCORE
+                  <Button as={NavLink} to="/founder" variant="danger">
+                    ARE YOU STARTUP ?
                   </Button>
 
                   <Button as={NavLink} to="/investors" variant="outline-light">
-                    EXPLORE FOR INVESTORS
+                    ARE YOU INVESTORS ?
                   </Button>
                 </div>
               </motion.div>
