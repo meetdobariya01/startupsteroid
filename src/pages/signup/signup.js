@@ -1,261 +1,270 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Card, Form } from "react-bootstrap";
 import { motion } from "framer-motion";
-import { FaUser, FaLock, FaEnvelope, FaPhone } from "react-icons/fa";
-import { NavLink, useNavigate } from "react-router-dom";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
-import axios from "axios";
+import {
+  FaUser,
+  FaEnvelope,
+  FaLock,
+  FaEye,
+  FaEyeSlash,
+  FaArrowRight,
+  FaRocket,
+  FaCheckCircle,
+} from "react-icons/fa";
+import { Link } from "react-router-dom";
 import "./signup.css";
-import Header from "../../components/header/header";
 import Footer from "../../components/footer/footer";
+import Header from "../../components/header/header";
 
-const Signup = () => {
-  const navigate = useNavigate();
+const Signup = ({ onSubmit }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-
-  const API_URL = 'http://api.startupsteroids.in';
 
   const [formData, setFormData] = useState({
-    username: "",
+    name: "",
     email: "",
-    mobile: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    setError("");
-    setSuccess("");
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setSuccess("");
-    setLoading(true);
+
+    if (formData.password.length < 8) {
+      setError("Password must contain at least 8 characters.");
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
 
     try {
-      // console.log('Sending request to:', `${API_URL}/api/auth/signup`);
+      setLoading(true);
 
-      const response = await axios.post(
-        `${API_URL}/api/auth/signup`,
-        {
-          username: formData.username,
+      // Connect your existing signup API here.
+      // Pass formData to your existing signup function.
+      if (onSubmit) {
+        await onSubmit({
+          name: formData.name,
           email: formData.email,
-          mobile: formData.mobile,
           password: formData.password,
-          confirmPassword: formData.confirmPassword
-        }
-      );
-
-      // console.log('Response:', response.data);
-
-      if (response.data.success) {
-        setSuccess("Account created successfully! Redirecting to login...");
-
-        if (response.data.token) {
-          localStorage.setItem("token", response.data.token);
-          localStorage.setItem("user", JSON.stringify(response.data.user));
-        }
-
-        setFormData({
-          username: "",
-          email: "",
-          mobile: "",
-          password: "",
-          confirmPassword: ""
         });
-
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
-      }
-    } catch (error) {
-      console.error('Error details:', error);
-
-      if (error.response) {
-        console.log('Server error:', error.response.data);
-        setError(error.response.data.message || "Signup failed");
-      } else if (error.request) {
-        console.log('No response from server');
-        setError("Cannot connect to server. Please make sure the backend is running on port 5000.");
       } else {
-        console.log('Other error:', error.message);
-        setError("An error occurred. Please try again.");
+        console.log("Signup form data:", {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        });
       }
+    } catch (err) {
+      setError(err.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div>pm2 logs startupsteroid-backend --lines 20
+    <div>
+      {/* Header */}
       <Header />
 
-      <div className="login-page d-flex align-items-center">
-        <Container>
-          <Card className="login-card overflow-hidden border-0 shadow-lg">
-            <Row className="g-0">
-              <Col lg={6}>
-                <div className="p-5">
-                  <h3 className="text-center mb-4">Create Account</h3>
+      <div className="signup-page">
+        <div className="signup-bg-glow signup-glow-one"></div>
+        <div className="signup-bg-glow signup-glow-two"></div>
 
-                  {error && (
-                    <div className="alert alert-danger alert-dismissible fade show" role="alert">
-                      {error}
-                      <button
-                        type="button"
-                        className="btn-close"
-                        onClick={() => setError("")}
-                      ></button>
-                    </div>
-                  )}
+        <div className="signup-container">
+          {/* LEFT SIDE */}
+          <motion.div
+            className="signup-left"
+            initial={{ opacity: 0, x: -35 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7 }}
+          >
+            {/* <Link to="/" className="signup-brand">
+            <span className="brand-icon">
+              <FaRocket />
+            </span>
+            <span>
+              STARTUP<span className="brand-highlight"> STEROID</span>
+            </span>
+          </Link> */}
 
-                  {success && (
-                    <div className="alert alert-success alert-dismissible fade show" role="alert">
-                      {success}
-                      <button
-                        type="button"
-                        className="btn-close"
-                        onClick={() => setSuccess("")}
-                      ></button>
-                    </div>
-                  )}
+            <div className="signup-left-content">
+              <span className="signup-eyebrow">
+                <span className="eyebrow-dot"></span>
+                YOUR NEXT CHAPTER STARTS HERE
+              </span>
 
-                  <Form onSubmit={handleSubmit}>
-                    <Form.Group className="mb-3 position-relative">
-                      <FaUser className="field-icon" />
-                      <Form.Control
-                        placeholder="Full Name (e.g. John Doe)"
-                        className="ps-5"
-                        name="username"
-                        value={formData.username}
-                        onChange={handleChange}
-                        disabled={loading}
-                        minLength={3}
-                        maxLength={50}
-                        required
-                      />
-                      <small className="text-muted d-block mt-1 ps-5">
-                        Letters, numbers, spaces allowed
-                      </small>
-                    </Form.Group>
+              <h1>
+                Build something
+                <br />
+                <span>extraordinary.</span>
+              </h1>
 
-                    <Form.Group className="mb-3 position-relative">
-                      <FaEnvelope className="field-icon" />
-                      <Form.Control
-                        placeholder="Email"
-                        className="ps-5"
-                        type="text"  // Changed from "email" to "text" to match login
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        disabled={loading}
-                        required
-                      />
-                    </Form.Group>
+              <p>
+                Join a community of ambitious founders, innovators, and
+                investors. Turn your vision into something bigger.
+              </p>
 
-                    <Form.Group className="mb-3 position-relative">
-                      <FaPhone className="field-icon" />
-                      <Form.Control
-                        placeholder="Mobile"
-                        className="ps-5"
-                        type="tel"
-                        name="mobile"
-                        value={formData.mobile}
-                        onChange={handleChange}
-                        disabled={loading}
-                        maxLength="10"
-                        required
-                      />
-                    </Form.Group>
-
-                    <Form.Group className="mb-3 position-relative">
-                      <FaLock className="field-icon" />
-                      <Form.Control
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Password"
-                        className="ps-5 pe-5"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        disabled={loading}
-                        required
-                      />
-                      <span
-                        className="position-absolute top-50 end-0 translate-middle-y me-3"
-                        style={{ cursor: "pointer" }}
-                        onClick={() => setShowPassword((v) => !v)}
-                      >
-                        {showPassword ? <FaEyeSlash /> : <FaEye />}
-                      </span>
-                    </Form.Group>
-
-                    <Form.Group className="mb-3 position-relative">
-                      <FaLock className="field-icon" />
-                      <Form.Control
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Confirm Password"
-                        className="ps-5"
-                        name="confirmPassword"
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
-                        disabled={loading}
-                        required
-                      />
-                    </Form.Group>
-
-                    <button
-                      type="submit"
-                      className="btn btn-outline-dark w-100"
-                      disabled={loading}
-                    >
-                      {loading ? (
-                        <>
-                          <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                          Creating Account...
-                        </>
-                      ) : (
-                        "SignUp"
-                      )}
-                    </button>
-
-                    <p className="text-center mt-3">
-                      Already have an account?{" "}
-                      <NavLink
-                        to="/login"
-                        className="text-decoration-none text-danger"
-                      >
-                        Login
-                      </NavLink>
-                    </p>
-                  </Form>
+              <div className="signup-benefits">
+                <div>
+                  <FaCheckCircle />
+                  <span>Connect with startup founders</span>
                 </div>
-              </Col>
-              <Col lg={6} className="left-panel d-none d-lg-flex">
-                <motion.div
-                  className="text-center text-white p-5"
-                  initial={{ x: -50, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
+                <div>
+                  <FaCheckCircle />
+                  <span>Discover investment opportunities</span>
+                </div>
+                <div>
+                  <FaCheckCircle />
+                  <span>Grow your startup ecosystem</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="signup-left-footer">
+              © {new Date().getFullYear()} Startup Steroid. All rights reserved.
+            </div>
+          </motion.div>
+
+          {/* RIGHT SIDE */}
+          <motion.div
+            className="signup-right"
+            initial={{ opacity: 0, y: 25 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.15 }}
+          >
+            <div className="signup-form-wrapper">
+              <div className="signup-form-heading">
+                <span className="signup-small-label">GET STARTED TODAY</span>
+                <h2>Create your account</h2>
+                <p>Enter your details to join the community.</p>
+              </div>
+
+              <form onSubmit={handleSubmit}>
+                <div className="signup-field">
+                  <label>Full Name</label>
+                  <div className="signup-input-box">
+                    <FaUser className="signup-input-icon" />
+                    <input
+                      type="text"
+                      name="name"
+                      placeholder="Enter your full name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="signup-field">
+                  <label>Email Address</label>
+                  <div className="signup-input-box">
+                    <FaEnvelope className="signup-input-icon" />
+                    <input
+                      type="email"
+                      name="email"
+                      placeholder="name@example.com"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="signup-field">
+                  <label>Password</label>
+                  <div className="signup-input-box">
+                    <FaLock className="signup-input-icon" />
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      placeholder="Create a password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      minLength={8}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="signup-eye-btn"
+                      onClick={() => setShowPassword(!showPassword)}
+                      aria-label="Toggle password visibility"
+                    >
+                      {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                  </div>
+                  <small className="signup-hint">Minimum 8 characters</small>
+                </div>
+
+                <div className="signup-field">
+                  <label>Confirm Password</label>
+                  <div className="signup-input-box">
+                    <FaLock className="signup-input-icon" />
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      name="confirmPassword"
+                      placeholder="Confirm your password"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="signup-eye-btn"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      aria-label="Toggle confirm password visibility"
+                    >
+                      {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                  </div>
+                </div>
+
+                {error && <div className="signup-error">{error}</div>}
+
+                <div className="signup-terms">
+                  <span>
+                    By creating an account, you agree to our{" "}
+                    <Link to="#">Terms of Service</Link> and{" "}
+                    <Link to="#">Privacy Policy</Link>.
+                  </span>
+                </div>
+
+                <motion.button
+                  type="submit"
+                  className="signup-submit-btn"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  disabled={loading}
                 >
-                  <h1>Launch Your Startup</h1>
-                  <p>Build, connect, and grow with confidence.</p>
-                  <div className="rocket">🚀</div>
-                </motion.div>
-              </Col>
-            </Row>
-          </Card>
-        </Container>
+                  {loading ? "Creating Account..." : "Create Account"}
+                  {!loading && <FaArrowRight />}
+                </motion.button>
+              </form>
+
+              <div className="signup-login-link">
+                Already have an account?
+                <Link to="/login"> Sign In</Link>
+              </div>
+            </div>
+          </motion.div>
+        </div>
       </div>
 
+      {/* Footer */}
       <Footer />
     </div>
   );

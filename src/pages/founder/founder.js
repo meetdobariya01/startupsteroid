@@ -1,27 +1,26 @@
-import { useEffect } from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { Container, Row, Col, Spinner } from "react-bootstrap";
 import { motion } from "framer-motion";
-import { NavLink, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   FaArrowRight,
-  FaLinkedinIn,
   FaLightbulb,
   FaRocket,
   FaHandshake,
   FaChartLine,
   FaUsers,
   FaBullseye,
-  FaRegCompass,
-  FaCalendarCheck,
   FaBrain,
   FaBuilding,
   FaQuoteLeft,
   FaStar,
   FaGlobe,
+  FaLock,
 } from "react-icons/fa6";
 import "./founder.css";
 import Footer from "../../components/footer/footer";
 import Header from "../../components/header/header";
+import { createOrder, verifyPayment } from "../../services/paymentService";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 35 },
@@ -34,31 +33,8 @@ const fadeUp = {
 
 const stagger = {
   hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.15 },
-  },
+  visible: { transition: { staggerChildren: 0.15 } },
 };
-
-const founders = [
-  {
-    initials: "CS",
-    name: "Chinmay Shah",
-    role: "Founder & CEO",
-    description:
-      "Driving the vision of building a stronger startup ecosystem by connecting founders, investors, mentors, and opportunities.",
-    linkedin: "https://www.linkedin.com/in/chinmayushah/",
-    number: "01",
-  },
-  {
-    initials: "NP",
-    name: "Nirjari Parikh",
-    role: "Co-Founder",
-    description:
-      "Working towards creating meaningful opportunities for entrepreneurs through collaboration, strategic thinking, and ecosystem development.",
-    linkedin: "#",
-    number: "02",
-  },
-];
 
 const initiatives = [
   {
@@ -105,19 +81,103 @@ const initiatives = [
   },
 ];
 
+const loadRazorpayScript = () =>
+  new Promise((resolve) => {
+    if (window.Razorpay) return resolve(true);
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+
 const Founder = () => {
-  const { pathname } = useLocation();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  // ✅ Extract applicationId passed from the form
+  const applicationId = location.state?.applicationId;
 
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: "instant", // or "smooth"
-    });
-  }, [pathname]);
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [location.pathname]);
+
+  const handlePayment = async () => {
+    setError("");
+    setLoading(true);
+
+    try {
+      // 1. Load Razorpay SDK
+      const loaded = await loadRazorpayScript();
+      if (!loaded) throw new Error("Failed to load Razorpay. Check your network.");
+
+      // 2. Create order on backend
+      const order = await createOrder();
+
+      // 3. Open Razorpay checkout
+      const options = {
+        key: order.keyId,
+        amount: order.amount,
+        currency: order.currency,
+        name: "Startup Steroid",
+        description: "Registration / Program Fee",
+        order_id: order.orderId,
+        image: "/logo.png", // optional
+        handler: async (response) => {
+          try {
+            // ✅ Pass the applicationId to the verification endpoint
+            const result = await verifyPayment({ 
+              ...response, 
+              applicationId 
+            });
+            
+            if (result.success) {
+              navigate("/dashboard", {
+                state: {
+                  paymentId: response.razorpay_payment_id,
+                  orderId: response.razorpay_order_id,
+                  amount: order.amount / 100,
+                },
+              });
+            } else {
+              setError("Payment verification failed. Please contact support.");
+            }
+          } catch (err) {
+            setError("Verification error. If money was deducted, contact support.");
+          } finally {
+            setLoading(false);
+          }
+        },
+        prefill: {
+          name: "",
+          email: "",
+          contact: "",
+        },
+        notes: { product: "Startup Steroid Program" },
+        theme: { color: "#f97316" },
+        modal: {
+          ondismiss: () => setLoading(false),
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+
+      rzp.on("payment.failed", (resp) => {
+        setError(resp.error?.description || "Payment failed. Please try again.");
+        setLoading(false);
+      });
+
+      rzp.open();
+    } catch (err) {
+      setError(err.message || "Could not initiate payment.");
+      setLoading(false);
+    }
+  };
+
   return (
     <div>
-      {/* HEADER */}
       <Header />
 
       <main className="ss-founder-page">
@@ -130,11 +190,7 @@ const Founder = () => {
           <Container className="ss-container">
             <Row className="align-items-center">
               <Col lg={9} xl={8}>
-                <motion.div
-                  initial="hidden"
-                  animate="visible"
-                  variants={stagger}
-                >
+                <motion.div initial="hidden" animate="visible" variants={stagger}>
                   <motion.div variants={fadeUp} className="ss-eyebrow">
                     <span className="ss-eyebrow-line"></span>
                     THE PEOPLE BEHIND THE VISION
@@ -152,15 +208,6 @@ const Founder = () => {
                     ambitious entrepreneurs deserve access to the right
                     connections, knowledge, and opportunities.
                   </motion.p>
-                  {/* 
-                  <motion.div variants={fadeUp} className="ss-hero-actions">
-                    <a href="#founders" className="ss-btn-primary">
-                      Meet Our Founders <FaArrowRight />
-                    </a>
-                    <a href="#our-vision" className="ss-btn-outline">
-                      Discover Our Vision
-                    </a>
-                  </motion.div> */}
                 </motion.div>
               </Col>
 
@@ -198,84 +245,88 @@ const Founder = () => {
           </Container>
         </section>
 
-        {/* FOUNDERS SECTION */}
-        {/* <section className="ss-section ss-founders-section" id="founders">
+        {/* CTA / PAYMENT */}
+        <section className="ss-cta-section">
           <Container className="ss-container">
             <motion.div
-              className="ss-section-heading"
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.2 }}
-              variants={fadeUp}
+              className="ss-cta-box ss-payment-cta"
+              initial={{ opacity: 0, y: 35 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
             >
+              <div className="ss-cta-decoration"></div>
+
               <div className="ss-eyebrow">
                 <span className="ss-eyebrow-line"></span>
-                MEET THE FOUNDERS
+                INVEST IN YOUR NEXT BIG MOVE
               </div>
+
               <h2>
-                Visionaries behind
+                Take the first step.
                 <br />
-                <span>the mission.</span>
+                <span>Make it happen.</span>
               </h2>
+
               <p>
-                The people bringing the Startup Steroid vision to life through
-                purpose, passion, and a commitment to entrepreneurial growth.
+                Get started with our ecosystem and unlock new opportunities to
+                grow, connect, and build something meaningful.
               </p>
+
+              <div className="ss-payment-card">
+                <span className="ss-price-label">
+                  Registration / Program Fee
+                </span>
+                <h3>₹9,999</h3>
+                <div className="ss-price-divider"></div>
+                <div className="ss-price-row">
+                  <span>Base Amount</span>
+                  <strong>₹9,999</strong>
+                </div>
+                <div className="ss-price-row">
+                  <span>GST (18%)</span>
+                  <strong>₹1,799.82</strong>
+                </div>
+                <div className="ss-price-divider"></div>
+                <div className="ss-price-row ss-total-row">
+                  <span>Total Payable</span>
+                  <strong>₹11,798.82</strong>
+                </div>
+                <small>Inclusive of 18% GST</small>
+              </div>
+
+              {error && <div className="ss-payment-error">⚠️ {error}</div>}
+
+              <button
+                onClick={handlePayment}
+                disabled={loading}
+                className="ss-btn-primary"
+                style={{
+                  opacity: loading ? 0.7 : 1,
+                  cursor: loading ? "not-allowed" : "pointer",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                }}
+              >
+                {loading ? (
+                  <>
+                    <Spinner animation="border" size="sm" /> Processing…
+                  </>
+                ) : (
+                  <>
+                    Proceed to Payment <FaArrowRight />
+                  </>
+                )}
+              </button>
+
+              <div className="ss-payment-note">
+                <FaLock style={{ marginRight: 6 }} />
+                Secure Payment · Transparent Pricing
+              </div>
             </motion.div>
-
-            <Row className="g-4 ss-founder-row">
-              {founders.map((founder) => (
-                <Col lg={6} key={founder.initials}>
-                  <motion.div
-                    className="ss-founder-card"
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.2 }}
-                    variants={fadeUp}
-                  >
-                    <div className="ss-founder-card-top">
-                      <span className="ss-founder-number">
-                        {founder.number}
-                      </span>
-                      <span className="ss-founder-label">LEADERSHIP</span>
-                    </div>
-
-                    <div className="ss-founder-profile">
-                      <div className="ss-founder-avatar">
-                        <span>{founder.initials}</span>
-                        <div className="ss-avatar-orbit"></div>
-                      </div>
-
-                      <div className="ss-founder-info">
-                        <h3>{founder.name}</h3>
-                        <span className="ss-founder-role">{founder.role}</span>
-                      </div>
-                    </div>
-
-                    <p className="ss-founder-description">
-                      {founder.description}
-                    </p>
-
-                    <div className="ss-founder-card-footer">
-                      <span>STARTUP STEROID</span>
-                      {founder.linkedin !== "#" && (
-                        <a
-                          href={founder.linkedin}
-                          target="_blank"
-                          rel="noreferrer"
-                          aria-label={`${founder.name} LinkedIn profile`}
-                        >
-                          <FaLinkedinIn />
-                        </a>
-                      )}
-                    </div>
-                  </motion.div>
-                </Col>
-              ))}
-            </Row>
           </Container>
-        </section> */}
-
+        </section>
         {/* VISION SECTION */}
         <section className="ss-section ss-vision-section" id="our-vision">
           <Container className="ss-container">
@@ -291,7 +342,6 @@ const Founder = () => {
                     <span className="ss-eyebrow-line"></span>
                     WHY WE STARTED
                   </div>
-
                   <h2 className="ss-section-title">
                     Great ideas deserve
                     <br />
@@ -366,10 +416,8 @@ const Founder = () => {
                       <div className="ss-initiative-icon">{item.icon}</div>
                       <span>{item.number}</span>
                     </div>
-
                     <h3>{item.title}</h3>
                     <p>{item.description}</p>
-
                     <div className="ss-initiative-line"></div>
                   </motion.div>
                 </Col>
@@ -378,7 +426,7 @@ const Founder = () => {
           </Container>
         </section>
 
-        {/* PHILOSOPHY SECTION */}
+        {/* PHILOSOPHY */}
         <section className="ss-section ss-philosophy-section">
           <Container className="ss-container">
             <motion.div
@@ -391,7 +439,6 @@ const Founder = () => {
               <div className="ss-philosophy-icon">
                 <FaLightbulb />
               </div>
-
               <div className="ss-philosophy-content">
                 <div className="ss-eyebrow">OUR PHILOSOPHY</div>
                 <h2>
@@ -406,13 +453,12 @@ const Founder = () => {
                   lasting value.
                 </p>
               </div>
-
               <FaStar className="ss-philosophy-decoration" />
             </motion.div>
           </Container>
         </section>
 
-        {/* ECOSYSTEM SECTION */}
+        {/* ECOSYSTEM */}
         <section className="ss-section ss-ecosystem-section">
           <Container className="ss-container">
             <motion.div
@@ -464,77 +510,8 @@ const Founder = () => {
           </Container>
         </section>
 
-        {/* CTA SECTION */}
-
-        <section className="ss-cta-section">
-          <Container className="ss-container">
-            <motion.div
-              className="ss-cta-box ss-payment-cta"
-              initial={{ opacity: 0, y: 35 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-            >
-              <div className="ss-cta-decoration"></div>
-
-              <div className="ss-eyebrow">
-                <span className="ss-eyebrow-line"></span>
-                INVEST IN YOUR NEXT BIG MOVE
-              </div>
-
-              <h2>
-                Take the first step.
-                <br />
-                <span>Make it happen.</span>
-              </h2>
-
-              <p>
-                Get started with our ecosystem and unlock new opportunities to
-                grow, connect, and build something meaningful.
-              </p>
-
-              <div className="ss-payment-card">
-                <span className="ss-price-label">
-                  Registration / Program Fee
-                </span>
-
-                <h3>₹9,999</h3>
-
-                <div className="ss-price-divider"></div>
-
-                <div className="ss-price-row">
-                  <span>Base Amount</span>
-                  <strong>₹9,999</strong>
-                </div>
-
-                <div className="ss-price-row">
-                  <span>GST (18%)</span>
-                  <strong>₹1,799.82</strong>
-                </div>
-
-                <div className="ss-price-divider"></div>
-
-                <div className="ss-price-row ss-total-row">
-                  <span>Total Payable</span>
-                  <strong>₹11,798.82</strong>
-                </div>
-
-                <small>Inclusive of 18% GST</small>
-              </div>
-
-              <NavLink to="#" className="ss-btn-primary">
-                Proceed to Payment <FaArrowRight />
-              </NavLink>
-
-              <div className="ss-payment-note">
-                <span>🔒</span> Secure Payment · Transparent Pricing
-              </div>
-            </motion.div>
-          </Container>
-        </section>
       </main>
 
-      {/* FOOTER */}
       <Footer />
     </div>
   );

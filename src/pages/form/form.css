@@ -1,0 +1,1180 @@
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+.startup-form-section {
+  width: 100%;
+  min-height: 100vh;
+  padding: 80px 0 100px;
+  overflow-x: hidden;
+  background:
+    radial-gradient(
+      circle at 10% 10%,
+      rgba(99, 102, 241, 0.08),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 90% 20%,
+      rgba(14, 165, 233, 0.08),
+      transparent 30%
+    ),
+    #f7f9fc;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.startup-form-header {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto 50px;
+  padding: 0 15px;
+  text-align: center;
+}
+
+.startup-form-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 50px;
+  background: rgba(79, 70, 229, 0.08);
+  color: #4f46e5;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.startup-form-header h1 {
+  margin: 18px 0 0;
+  color: #111827;
+  font-size: clamp(32px, 5vw, 54px);
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -1.8px;
+}
+
+.startup-form-header h1 span {
+  color: #4f46e5;
+}
+
+.startup-form-header p {
+  max-width: 650px;
+  margin: 18px auto 0;
+  color: #6b7280;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+/* =========================================================
+   MAIN FORM
+========================================================= */
+
+.startup-form-wrapper {
+  width: calc(100% - 30px);
+  max-width: 1050px;
+  margin: 0 auto;
+  padding: 38px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  box-shadow:
+    0 25px 70px rgba(15, 23, 42, 0.08),
+    0 5px 20px rgba(15, 23, 42, 0.03);
+}
+
+/* =========================================================
+   STEPS
+========================================================= */
+
+.form-progress-wrapper {
+  position: relative;
+  width: 100%;
+  margin-bottom: 45px;
+}
+
+/* Progress line */
+
+.step-progress-line {
+  position: absolute;
+  top: 23px;
+  left: 45px;
+  right: 45px;
+  z-index: 0;
+}
+
+.step-progress-line .progress {
+  height: 3px;
+  margin: 0;
+  background: #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.step-progress-line .progress-bar {
+  background: linear-gradient(
+    90deg,
+    #4f46e5,
+    #7c3aed
+  );
+  transition: width 0.45s ease;
+}
+
+/* Steps wrapper */
+
+.form-steps {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.form-step-item {
+  flex: 0 0 auto;
+  min-width: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-step-circle {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: 2px solid #e5e7eb;
+  color: #9ca3af;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.form-step-item.active .form-step-circle {
+  color: #ffffff;
+  background: #4f46e5;
+  border-color: #4f46e5;
+  box-shadow:
+    0 0 0 7px rgba(79, 70, 229, 0.1),
+    0 10px 25px rgba(79, 70, 229, 0.2);
+}
+
+.form-step-item.completed .form-step-circle {
+  color: #ffffff;
+  background: #10b981;
+  border-color: #10b981;
+}
+
+.form-step-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.step-number {
+  color: #9ca3af;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.step-title {
+  margin-top: 3px;
+  color: #374151;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.form-step-item.active .step-title {
+  color: #4f46e5;
+}
+
+/* =========================================================
+   FORM CONTENT
+========================================================= */
+
+.form-section-content {
+  width: 100%;
+  min-height: 470px;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  margin-bottom: 35px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #eef0f4;
+}
+
+.section-heading-icon {
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+  color: #4f46e5;
+  background: rgba(79, 70, 229, 0.08);
+  font-size: 20px;
+}
+
+.section-heading h2 {
+  margin: 0;
+  color: #111827;
+  font-size: 25px;
+  font-weight: 800;
+}
+
+.section-heading p {
+  margin: 5px 0 0;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   FORM FIELDS
+========================================================= */
+
+.premium-form-group {
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.premium-form-group > label {
+  display: block;
+  margin-bottom: 9px;
+  color: #1f2937;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.premium-form-group > label span {
+  color: #ef4444;
+  margin-left: 2px;
+}
+
+.label-helper {
+  margin-left: 5px;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.premium-form-group .form-control,
+.premium-form-group .form-select {
+  width: 100%;
+  min-height: 52px;
+  border: 1px solid #e1e5eb;
+  border-radius: 11px;
+  padding: 12px 15px;
+  color: #111827;
+  background: #ffffff;
+  font-size: 14px;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.premium-form-group .form-control:focus,
+.premium-form-group .form-select:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+.premium-form-group .form-control::placeholder {
+  color: #a5abb5;
+}
+
+.premium-form-group textarea.form-control {
+  min-height: 130px;
+  resize: vertical;
+  line-height: 1.7;
+}
+
+/* =========================================================
+   INPUT ICON
+========================================================= */
+
+.input-with-icon {
+  position: relative;
+  width: 100%;
+}
+
+.input-with-icon .form-control {
+  padding-left: 45px;
+}
+
+.input-icon {
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  z-index: 2;
+  color: #9ca3af;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* =========================================================
+   ERRORS
+========================================================= */
+
+.field-error {
+  margin-top: 6px;
+  color: #dc2626;
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border-color: #ef4444 !important;
+  background-image: none !important;
+}
+
+/* =========================================================
+   PHONE
+========================================================= */
+
+.premium-phone-container {
+  width: 100% !important;
+}
+
+.premium-phone-input {
+  width: 100% !important;
+  height: 52px !important;
+  border: 1px solid #e1e5eb !important;
+  border-radius: 11px !important;
+  padding-left: 58px !important;
+  color: #111827 !important;
+  font-size: 14px !important;
+}
+
+.premium-phone-input:focus {
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
+}
+
+.premium-phone-button {
+  height: 52px !important;
+  border: 1px solid #e1e5eb !important;
+  border-radius: 11px 0 0 11px !important;
+  background: #ffffff !important;
+}
+
+.premium-phone-search {
+  width: calc(100% - 20px) !important;
+  margin: 5px 10px !important;
+}
+
+/* =========================================================
+   CURRENCY
+========================================================= */
+
+.currency-input {
+  display: flex;
+  width: 100%;
+  align-items: stretch;
+  border: 1px solid #e1e5eb;
+  border-radius: 11px;
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+
+.currency-input:focus-within {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+.currency-input > span {
+  width: 50px;
+  min-width: 50px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4f46e5;
+  background: #f7f7ff;
+  font-weight: 800;
+}
+
+.currency-input .form-control {
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* =========================================================
+   TEXTAREA
+========================================================= */
+
+.textarea-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.textarea-label-row small {
+  flex-shrink: 0;
+  color: #9ca3af;
+  font-size: 11px;
+}
+
+/* =========================================================
+   PITCH DECK
+========================================================= */
+
+.pitch-upload-box {
+  width: 100%;
+  min-height: 300px;
+  padding: 40px 20px;
+  border: 2px dashed #d5d9e2;
+  border-radius: 18px;
+  background: #fafbff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pitch-upload-box:hover,
+.pitch-upload-box.drag-active {
+  border-color: #6366f1;
+  background: #f7f7ff;
+}
+
+.upload-icon {
+  width: 70px;
+  height: 70px;
+  margin-bottom: 20px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4f46e5;
+  background: rgba(79, 70, 229, 0.1);
+  font-size: 30px;
+}
+
+.pitch-upload-box h4 {
+  margin: 0;
+  color: #1f2937;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.pitch-upload-box p {
+  margin: 8px 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.browse-text {
+  color: #4f46e5;
+  font-weight: 700;
+}
+
+.pitch-upload-box small {
+  color: #9ca3af;
+  font-size: 12px;
+}
+
+/* =========================================================
+   FILES
+========================================================= */
+
+.uploaded-files {
+  width: 100%;
+  margin-top: 25px;
+}
+
+.uploaded-files h6 {
+  margin-bottom: 12px;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.uploaded-file-item {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 10px;
+  padding: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.uploaded-file-left {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.file-icon {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  color: #4f46e5;
+  background: #f0f0ff;
+}
+
+.uploaded-file-left > div:last-child {
+  min-width: 0;
+}
+
+.uploaded-file-left strong {
+  display: block;
+  max-width: 600px;
+  overflow: hidden;
+  color: #374151;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.uploaded-file-left span {
+  display: block;
+  margin-top: 3px;
+  color: #9ca3af;
+  font-size: 11px;
+}
+
+.remove-file-btn {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ef4444;
+  background: #fff1f2;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.remove-file-btn:hover {
+  color: #ffffff;
+  background: #ef4444;
+}
+
+/* =========================================================
+   PITCH NOTE
+========================================================= */
+
+.pitch-note {
+  width: 100%;
+  display: flex;
+  gap: 8px;
+  margin-top: 22px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #f8fafc;
+  color: #6b7280;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.pitch-note strong {
+  color: #374151;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+.form-navigation {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 35px;
+  padding-top: 25px;
+  border-top: 1px solid #eef0f4;
+}
+
+.previous-btn,
+.next-btn,
+.submit-btn {
+  min-height: 50px;
+  padding: 0 22px !important;
+  border-radius: 11px !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  transition: all 0.3s ease !important;
+}
+
+.previous-btn {
+  color: #4b5563 !important;
+  background: #ffffff !important;
+  border: 1px solid #dfe3e8 !important;
+}
+
+.next-btn,
+.submit-btn {
+  color: #ffffff !important;
+  border: 0 !important;
+  background: linear-gradient(
+    135deg,
+    #4f46e5,
+    #7c3aed
+  ) !important;
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.2);
+}
+
+.submit-btn {
+  background: linear-gradient(
+    135deg,
+    #059669,
+    #10b981
+  ) !important;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 991px) {
+  .startup-form-section {
+    padding: 60px 0 80px;
+  }
+
+  .startup-form-wrapper {
+    padding: 30px;
+  }
+
+  .form-step-text {
+    display: none;
+  }
+
+  .form-step-item {
+    min-width: 60px;
+  }
+
+  .step-progress-line {
+    left: 30px;
+    right: 30px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 767px) {
+  .startup-form-section {
+    padding: 35px 0 50px;
+  }
+
+  .startup-form-header {
+    margin-bottom: 28px;
+    padding: 0 20px;
+  }
+
+  .startup-form-header h1 {
+    font-size: 32px;
+    letter-spacing: -1px;
+  }
+
+  .startup-form-header p {
+    margin-top: 14px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* Form */
+
+  .startup-form-wrapper {
+    width: calc(100% - 20px);
+    padding: 22px 16px;
+    border-radius: 18px;
+  }
+
+  /* =====================================================
+     MOBILE STEPS
+  ===================================================== */
+
+  .form-progress-wrapper {
+    width: 100%;
+    margin-bottom: 32px;
+    overflow: hidden;
+  }
+
+  .form-steps {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    justify-content: flex-start;
+    gap: 22px;
+    padding: 5px 5px 12px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .form-steps::-webkit-scrollbar {
+    display: none;
+  }
+
+  .form-step-item {
+    min-width: 55px;
+    flex: 0 0 55px;
+  }
+
+  .form-step-circle {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    font-size: 13px;
+  }
+
+  .form-step-text {
+    display: flex;
+    margin-top: 7px;
+  }
+
+  .step-number {
+    font-size: 8px;
+  }
+
+  .step-title {
+    max-width: 65px;
+    overflow: hidden;
+    font-size: 9px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /*
+    Hide desktop progress line on mobile.
+    This prevents the line from breaking when steps scroll.
+  */
+
+  .step-progress-line {
+    display: none;
+  }
+
+  /* =====================================================
+     SECTION HEADING
+  ===================================================== */
+
+  .form-section-content {
+    min-height: auto;
+  }
+
+  .section-heading {
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 25px;
+    padding-bottom: 18px;
+  }
+
+  .section-heading-icon {
+    width: 43px;
+    height: 43px;
+    min-width: 43px;
+    flex: 0 0 43px;
+    border-radius: 11px;
+    font-size: 16px;
+  }
+
+  .section-heading h2 {
+    font-size: 21px;
+    line-height: 1.25;
+  }
+
+  .section-heading p {
+    margin-top: 5px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  /* =====================================================
+     BOOTSTRAP ROW FIX
+  ===================================================== */
+
+  .startup-form-wrapper .row {
+    --bs-gutter-x: 0;
+    --bs-gutter-y: 0;
+  }
+
+  .startup-form-wrapper .row > [class*="col-"] {
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* =====================================================
+     INPUTS
+  ===================================================== */
+
+  .premium-form-group {
+    margin-bottom: 18px;
+  }
+
+  .premium-form-group > label {
+    margin-bottom: 7px;
+    font-size: 12px;
+  }
+
+  .premium-form-group .form-control,
+  .premium-form-group .form-select {
+    width: 100%;
+    min-height: 49px;
+    padding: 11px 13px;
+    border-radius: 10px;
+    font-size: 13px;
+  }
+
+  .premium-form-group textarea.form-control {
+    min-height: 125px;
+  }
+
+  /* =====================================================
+     PHONE
+  ===================================================== */
+
+  .premium-phone-input {
+    height: 49px !important;
+    padding-left: 54px !important;
+    font-size: 13px !important;
+  }
+
+  .premium-phone-button {
+    height: 49px !important;
+  }
+
+  /* =====================================================
+     CURRENCY
+  ===================================================== */
+
+  .currency-input > span {
+    width: 45px;
+    min-width: 45px;
+    height: 49px;
+  }
+
+  /* =====================================================
+     UPLOAD
+  ===================================================== */
+
+  .pitch-upload-box {
+    min-height: 230px;
+    padding: 30px 15px;
+    border-radius: 15px;
+  }
+
+  .upload-icon {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 15px;
+    border-radius: 17px;
+    font-size: 25px;
+  }
+
+  .pitch-upload-box h4 {
+    font-size: 16px;
+  }
+
+  .pitch-upload-box p {
+    font-size: 13px;
+  }
+
+  .pitch-upload-box small {
+    font-size: 11px;
+  }
+
+  /* =====================================================
+     FILE
+  ===================================================== */
+
+  .uploaded-file-item {
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .uploaded-file-left {
+    gap: 9px;
+  }
+
+  .file-icon {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+  }
+
+  .uploaded-file-left strong {
+    max-width: calc(100vw - 150px);
+    font-size: 11px;
+  }
+
+  .uploaded-file-left span {
+    font-size: 10px;
+  }
+
+  .remove-file-btn {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+  }
+
+  /* =====================================================
+     NOTE
+  ===================================================== */
+
+  .pitch-note {
+    flex-direction: column;
+    gap: 5px;
+    padding: 13px;
+    font-size: 11px;
+  }
+
+  /* =====================================================
+     NAVIGATION
+  ===================================================== */
+
+  .form-navigation {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 10px;
+    margin-top: 25px;
+    padding-top: 20px;
+  }
+
+  .form-navigation > div {
+    display: none;
+  }
+
+  .previous-btn,
+  .next-btn,
+  .submit-btn {
+    width: 100%;
+    min-height: 49px;
+    padding: 0 15px !important;
+    border-radius: 10px !important;
+    font-size: 13px !important;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+  .startup-form-section {
+    padding: 25px 0 40px;
+  }
+
+  .startup-form-header {
+    padding: 0 15px;
+    margin-bottom: 22px;
+  }
+
+  .startup-form-badge {
+    padding: 7px 12px;
+    font-size: 10px;
+  }
+
+  .startup-form-header h1 {
+    margin-top: 14px;
+    font-size: 27px;
+    line-height: 1.15;
+  }
+
+  .startup-form-header p {
+    font-size: 12px;
+  }
+
+  .startup-form-wrapper {
+    width: calc(100% - 14px);
+    padding: 18px 13px;
+    border-radius: 16px;
+  }
+
+  /* Steps */
+
+  .form-steps {
+    gap: 19px;
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+
+  .form-step-item {
+    min-width: 52px;
+    flex-basis: 52px;
+  }
+
+  .form-step-circle {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+    font-size: 11px;
+  }
+
+  .step-number {
+    font-size: 7px;
+  }
+
+  .step-title {
+    max-width: 60px;
+    font-size: 8px;
+  }
+
+  /* Heading */
+
+  .section-heading {
+    gap: 10px;
+  }
+
+  .section-heading-icon {
+    width: 39px;
+    height: 39px;
+    min-width: 39px;
+    flex-basis: 39px;
+    font-size: 14px;
+  }
+
+  .section-heading h2 {
+    font-size: 18px;
+  }
+
+  .section-heading p {
+    font-size: 11px;
+  }
+
+  /* Form */
+
+  .premium-form-group {
+    margin-bottom: 16px;
+  }
+
+  .premium-form-group > label {
+    font-size: 11px;
+  }
+
+  .premium-form-group .form-control,
+  .premium-form-group .form-select {
+    min-height: 47px;
+    font-size: 12px;
+  }
+
+  .premium-form-group textarea.form-control {
+    min-height: 115px;
+  }
+
+  /* Phone */
+
+  .premium-phone-input {
+    height: 47px !important;
+    font-size: 12px !important;
+  }
+
+  .premium-phone-button {
+    height: 47px !important;
+  }
+
+  /* Upload */
+
+  .pitch-upload-box {
+    min-height: 210px;
+  }
+
+  /* Navigation */
+
+  .previous-btn,
+  .next-btn,
+  .submit-btn {
+    min-height: 47px;
+    font-size: 12px !important;
+  }
+}
+
+/* =========================================================
+   VERY SMALL DEVICES
+========================================================= */
+
+@media (max-width: 360px) {
+  .startup-form-wrapper {
+    width: calc(100% - 8px);
+    padding: 16px 11px;
+  }
+
+  .startup-form-header h1 {
+    font-size: 24px;
+  }
+
+  .form-steps {
+    gap: 15px;
+  }
+
+  .form-step-item {
+    min-width: 48px;
+    flex-basis: 48px;
+  }
+
+  .form-step-circle {
+    width: 35px;
+    height: 35px;
+    flex-basis: 35px;
+  }
+
+  .step-title {
+    max-width: 52px;
+    font-size: 7px;
+  }
+
+  .section-heading h2 {
+    font-size: 17px;
+  }
+
+  .section-heading p {
+    font-size: 10px;
+  }
+
+  .premium-form-group .form-control,
+  .premium-form-group .form-select {
+    font-size: 11px;
+  }
+
+  .pitch-upload-box {
+    min-height: 190px;
+    padding: 20px 10px;
+  }
+}
