@@ -11,6 +11,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 
 import api from "../../api/axios";
+import { useAuth } from "../../context/AuthContext"; // ✅ Import useAuth
 import "react-phone-input-2/lib/style.css";
 import "./form.css";
 
@@ -58,15 +59,18 @@ const MAX_FILES = 5;
 
 function StartupApplicationForm() {
   const navigate = useNavigate();
+  const { user } = useAuth(); // ✅ Get the current logged-in user
   const [currentStep, setCurrentStep] = useState(1);
   
-  // ✅ Load from localStorage on initial render
+  // ✅ Create a unique draft key for THIS specific user
+  const draftKey = user ? `startup_form_draft_${user.id}` : "startup_form_draft_guest";
+
   const [formData, setFormData] = useState(() => {
-    const saved = localStorage.getItem("startup_form_draft");
+    const saved = localStorage.getItem(draftKey);
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        return { ...initialFormData, ...parsed, pitchDeck: [] }; // Always reset pitchDeck
+        return { ...initialFormData, ...parsed, pitchDeck: [] };
       } catch (e) {
         return initialFormData;
       }
@@ -85,25 +89,23 @@ function StartupApplicationForm() {
 
   const fileInputRef = useRef(null);
 
-  // ✅ Auto-save to localStorage whenever formData changes
+  // ✅ Save to the USER's specific draft key
   useEffect(() => {
-    // Check if form has any data to avoid saving an empty form on first load
     const hasData = Object.keys(formData).some((key) => {
       if (key === "pitchDeck") return false;
       return formData[key] && formData[key].toString().trim() !== "";
     });
 
-    if (hasData) {
+    if (hasData && user) {
       const dataToSave = { ...formData };
       delete dataToSave.pitchDeck;
-      localStorage.setItem("startup_form_draft", JSON.stringify(dataToSave));
+      localStorage.setItem(draftKey, JSON.stringify(dataToSave));
       setShowDraftBanner(true);
       
-      // Hide the banner after 3 seconds
       const timeout = setTimeout(() => setShowDraftBanner(false), 3000);
       return () => clearTimeout(timeout);
     }
-  }, [formData]);
+  }, [formData, draftKey, user]);
 
   const updateField = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -237,8 +239,8 @@ function StartupApplicationForm() {
         message: "Application saved! Redirecting to payment...",
       });
 
-      // ✅ Clear the draft since submission was successful
-      localStorage.removeItem("startup_form_draft");
+      // ✅ Clear the USER'S specific draft
+      localStorage.removeItem(draftKey);
 
       setTimeout(() => {
         navigate("/founder", { state: { applicationId: data.applicationId } });
@@ -266,6 +268,15 @@ function StartupApplicationForm() {
   const getFileIcon = (file) => file.name.toLowerCase().endsWith(".pdf") ? <FaFilePdf /> : <FaFilePowerpoint />;
   const progress = (currentStep / steps.length) * 100;
 
+  const handleClearDraft = () => {
+    if (window.confirm("Are you sure you want to clear the form? All saved data will be lost.")) {
+      localStorage.removeItem(draftKey);
+      setFormData(initialFormData);
+      setCurrentStep(1);
+      setShowDraftBanner(false);
+    }
+  };
+
   return (
     <section className="startup-form-section">
       <Container>
@@ -275,14 +286,21 @@ function StartupApplicationForm() {
           <p>Complete the application below to help us understand your company, product and funding requirements.</p>
         </motion.div>
 
-        {/* ✅ Draft Saved Indicator */}
         {showDraftBanner && (
           <motion.div 
             initial={{ opacity: 0, y: -10 }} 
             animate={{ opacity: 1, y: 0 }} 
-            style={{ textAlign: "center", color: "#10b981", marginBottom: "1rem", fontSize: "0.9rem", fontWeight: "600" }}
+            style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "1rem", marginBottom: "1rem" }}
           >
-            <FaSave /> Draft saved automatically
+            <span style={{ color: "#10b981", fontSize: "0.9rem", fontWeight: "600" }}>
+              <FaSave /> Draft saved automatically
+            </span>
+            <button 
+              onClick={handleClearDraft}
+              style={{ background: "transparent", border: "none", color: "#dc2626", textDecoration: "underline", fontSize: "0.8rem", cursor: "pointer" }}
+            >
+              Clear Form
+            </button>
           </motion.div>
         )}
 

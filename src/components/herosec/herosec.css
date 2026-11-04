@@ -10,13 +10,13 @@
   font-size: 0.8rem;
 }
 
-.hero-title {
-  font-size: 70px;
+.hero-title-home {
+  font-size: 44px;
   font-weight: 900;
   line-height: 0.95;
 }
 
-.hero-title span {
+.hero-title-home span {
   color: #d4ff2a;
 }
 
@@ -33,7 +33,7 @@
 }
 
 @media (max-width:720px){
-.hero-title{
+.hero-title-home{
     font-size: 50px;
 }
 }

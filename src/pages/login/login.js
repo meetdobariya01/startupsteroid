@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
-import { FaGoogle, FaEye, FaEyeSlash, FaPlus } from "react-icons/fa";
+import { FaGoogle, FaEye, FaEyeSlash, FaArrowRight, FaPlus } from "react-icons/fa";
 import { FiMail, FiLock } from "react-icons/fi";
 import { useAuth } from "../../context/AuthContext";
 import "./login.css";
+import Footer from "../../components/footer/footer";
+import Header from "../../components/header/header";
 
 const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || "";
 
@@ -27,11 +29,10 @@ const LoginForm = () => {
   const [lockoutSeconds, setLockoutSeconds] = useState(0);
 
   const signupSuccess = searchParams.get("signup") === "success";
-  const profileSuccess = searchParams.get("profile") === "success";  // ✅ NEW
+  const profileSuccess = searchParams.get("profile") === "success";
 
   useEffect(() => {
     if (lockoutSeconds <= 0) return;
-
     const interval = setInterval(() => {
       setLockoutSeconds((prev) => {
         if (prev <= 1) {
@@ -42,7 +43,6 @@ const LoginForm = () => {
         return prev - 1;
       });
     }, 1000);
-
     return () => clearInterval(interval);
   }, [lockoutSeconds]);
 
@@ -53,7 +53,7 @@ const LoginForm = () => {
 
     try {
       const user = await login(email, password);
-      const target = user.isProfileComplete ? "/dashboard" : "/form";  // ✅ routes by profile status
+      const target = user.isProfileComplete ? "/dashboard" : "/form";
       navigate(target, { replace: true });
     } catch (err) {
       const status = err.response?.status;
@@ -85,7 +85,7 @@ const LoginForm = () => {
     setLoading(true);
     try {
       const user = await googleLogin(credentialResponse.credential);
-      const target = user.isProfileComplete ? "/dashboard" : "/form";  // ✅ routes by profile status
+      const target = user.isProfileComplete ? "/dashboard" : "/form";
       navigate(target, { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || "Google sign-in failed.");
@@ -97,166 +97,105 @@ const LoginForm = () => {
   const isLocked = lockoutSeconds > 0;
 
   return (
-    <div className="login-page">
-      <div className="login-container">
-        <div className="login-left">
-          <div className="finotic-logo">
-            <img src="/images/logo.png" alt="Startup Steroid" className="logo w-25" />
-          </div>
+    <div>
+      <Header />
+      <main className="ss-login-page">
+        <div className="ss-login-orb ss-login-orb-one" />
+        <div className="ss-login-orb ss-login-orb-two" />
 
-          <div className="finance-illustration">
-            <div className="balance-card finance-card">
-              <div className="card-icon">
-                <div className="wallet-shape"></div>
-              </div>
-              <span className="card-label">CURRENT BALANCE</span>
-              <div className="balance">
-                <span>$</span>24,359
-              </div>
+        <section className="ss-login-shell">
+          <aside className="ss-login-showcase">
+            <div className="ss-showcase-top">
+              <span className="ss-eyebrow"><span /> BUILT FOR AMBITIOUS FOUNDERS</span>
+              <h1>Big ideas deserve<br /><em>bold beginnings.</em></h1>
+              <p>Your next chapter starts here. Connect with opportunities, move your ideas forward, and build something meaningful.</p>
             </div>
 
-            <div className="chart-card finance-card">
-              <div className="donut-chart">
-                <div className="donut-inner">
-                  <strong>34%</strong>
-                  <span>Food</span>
-                </div>
+            <div className="ss-visual-stage" aria-hidden="true">
+              <div className="ss-visual-grid" />
+              <div className="ss-orbit ss-orbit-outer" />
+              <div className="ss-orbit ss-orbit-inner" />
+              <div className="ss-visual-core">
+                <div className="ss-core-mark"><FaPlus /></div>
+                <span>IDEA</span>
+                <strong>→ IMPACT</strong>
               </div>
-            </div>
-
-            <div className="transaction-card finance-card">
-              <div className="transaction-plus">
-                <FaPlus />
+              <div className="ss-float-card ss-float-card-top">
+                <span className="ss-float-icon">↗</span>
+                <div><small>YOUR NEXT MOVE</small><b>Starts today</b></div>
               </div>
-              <strong>New transaction</strong>
-              <span>or upload .xls file</span>
-            </div>
-          </div>
-
-          <div className="left-content">
-            <h1>Welcome back!</h1>
-            <p>Start managing your finance faster and better</p>
-          </div>
-        </div>
-
-        <div className="login-right">
-          <div className="login-form-wrapper">
-            <div className="login-heading">
-              <h2>Welcome back!</h2>
-              <p>Start managing your finance faster and better</p>
+              <div className="ss-float-card ss-float-card-bottom">
+                <span className="ss-mini-bars"><i /><i /><i /><i /></span>
+                <div><small>GROWTH MINDSET</small><b>Think beyond limits</b></div>
+              </div>
+              <span className="ss-stage-star ss-star-one">✳</span>
+              <span className="ss-stage-star ss-star-two">✦</span>
             </div>
 
-            {/* ✅ Handles both signup and profile completion success */}
+            <div className="ss-showcase-footer">
+              <span>01 — 03</span>
+              <span className="ss-footer-line" />
+              <span>IDEATE. BUILD. SCALE.</span>
+            </div>
+          </aside>
+
+          <section className="ss-login-panel">
+            <div className="ss-panel-heading">
+              <span className="ss-panel-kicker">WELCOME BACK</span>
+              <h2>Good to see<br />you <span>again.</span></h2>
+              <p>Sign in to continue your journey.</p>
+            </div>
+
             {(signupSuccess || profileSuccess) && (
-              <div
-                role="status"
-                style={{
-                  background: "#ecfdf5",
-                  border: "1px solid #a7f3d0",
-                  color: "#065f46",
-                  padding: "10px 14px",
-                  borderRadius: 8,
-                  marginBottom: 16,
-                  fontSize: "0.9rem",
-                }}
-              >
-                {profileSuccess
-                  ? "✅ Profile completed successfully! Please log in to continue."
-                  : "✅ Account created successfully! Please log in."}
+              <div className="ss-alert ss-alert-success" role="status">
+                <span>✓</span>
+                {profileSuccess ? "Profile completed successfully! Please log in to continue." : "Account created successfully! Please log in."}
               </div>
             )}
 
-            <form onSubmit={handleSubmit} noValidate>
-              <div className="input-group-custom">
-                <div className="input-icon">
-                  <FiMail />
-                </div>
-                <input
-                  type="email"
-                  placeholder="you@example.com"
-                  autoComplete="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  disabled={loading || isLocked}
-                />
+            <form className="ss-login-form" onSubmit={handleSubmit} noValidate>
+              <label className="ss-field-label" htmlFor="login-email">Email address</label>
+              <div className="ss-field">
+                <FiMail className="ss-field-icon" />
+                <input id="login-email" type="email" placeholder="name@company.com" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required disabled={loading || isLocked} />
               </div>
 
-              <div className="input-group-custom">
-                <div className="input-icon">
-                  <FiLock />
-                </div>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="At least 8 characters"
-                  autoComplete="current-password"
-                  minLength={8}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  disabled={loading || isLocked}
-                />
-                <button
-                  type="button"
-                  className="password-toggle"
-                  onClick={() => setShowPassword((s) => !s)}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                  tabIndex={-1}
-                >
+              <div className="ss-password-label-row">
+                <label className="ss-field-label" htmlFor="login-password">Password</label>
+                <Link to="/forgot-password" className="ss-forgot-link">Forgot password?</Link>
+              </div>
+              <div className="ss-field">
+                <FiLock className="ss-field-icon" />
+                <input id="login-password" type={showPassword ? "text" : "password"} placeholder="Enter your password" autoComplete="current-password" minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} required disabled={loading || isLocked} />
+                <button type="button" className="ss-password-toggle" onClick={() => setShowPassword((value) => !value)} aria-label={showPassword ? "Hide password" : "Show password"}>
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
 
               {(error || isLocked) && (
-                <div
-                  className="login-error"
-                  role="alert"
-                  style={{
-                    color: "#dc2626",
-                    fontSize: "0.875rem",
-                    marginTop: "-0.5rem",
-                    marginBottom: "0.75rem",
-                    fontWeight: isLocked ? "600" : "400",
-                  }}
-                >
-                  {isLocked
-                    ? `🔒 Account locked. Try again in ${formatTime(lockoutSeconds)}.`
-                    : error}
+                <div className="ss-alert ss-alert-error" role="alert">
+                  {isLocked ? `Account locked. Try again in ${formatTime(lockoutSeconds)}.` : error}
                 </div>
               )}
 
-              <div className="forgot-wrapper">
-                <Link to="/forgot-password">Forgot password?</Link>
-              </div>
-
-              <button
-                type="submit"
-                className="login-button"
-                disabled={loading || !email || !password || isLocked}
-              >
-                {isLocked
-                  ? `Locked (${formatTime(lockoutSeconds)})`
-                  : loading
-                  ? "Logging in…"
-                  : "Login"}
+              <button type="submit" className="ss-submit-button" disabled={loading || !email || !password || isLocked}>
+                <span>{isLocked ? `Locked (${formatTime(lockoutSeconds)})` : loading ? "Signing you in..." : "Sign in to your account"}</span>
+                {!loading && !isLocked && <FaArrowRight />}
+                {loading && <span className="ss-button-spinner" />}
               </button>
             </form>
 
-            <div className="divider">
-              <span></span>
-              <p>or</p>
-              <span></span>
+            <div className="ss-separator">
+              <span /> <small>OR CONTINUE WITH</small> <span />
             </div>
 
-            <div
-              className="social-login"
-              style={{ display: "flex", justifyContent: "center" }}
-            >
+            <div className="ss-google-wrap">
+              {/* ✅ FIX: Shows a clear alert if the ENV variable is missing */}
               {GOOGLE_CLIENT_ID ? (
                 <GoogleLogin
                   onSuccess={handleGoogleSuccess}
-                  onError={() => setError("Google sign-in was cancelled.")}
-                  theme="outline"
+                  onError={() => setError("Google sign-in was cancelled or blocked by your browser.")}
+                  theme="filled_black"
                   size="large"
                   width="320"
                   text="continue_with"
@@ -264,31 +203,32 @@ const LoginForm = () => {
                   logo_alignment="left"
                 />
               ) : (
-                <button
-                  type="button"
-                  className="social-button"
-                  disabled
-                  title="Google Client ID missing in .env"
-                >
-                  <FaGoogle className="google-icon" />
-                  <span>Google (configure REACT_APP_GOOGLE_CLIENT_ID)</span>
-                </button>
+                <div style={{ color: "#dc2626", fontSize: "0.85rem", textAlign: "center", background: "#450a0a", padding: "10px", borderRadius: "8px" }}>
+                  ⚠️ <strong>Google Login Disabled:</strong> <br />
+                  `REACT_APP_GOOGLE_CLIENT_ID` is missing in your `.env` file.
+                </div>
               )}
             </div>
 
-            <div className="signup-text">
-              Don't you have an account? <Link to="/signup"> SignUp</Link>
+            <p className="ss-signup-copy">
+              New to Startup Steroid?{" "}
+              <Link to="/signup">Create an account <span>↗</span></Link>
+            </p>
+            <div className="ss-panel-bottom">
+              <span>© {new Date().getFullYear()} Startup Steroid</span>
+              <span>Secure founder access</span>
             </div>
-          </div>
-        </div>
-      </div>
+          </section>
+        </section>
+      </main>
+      <Footer />
     </div>
   );
 };
 
 const Login = () => {
   if (!GOOGLE_CLIENT_ID) {
-    console.warn("⚠️ REACT_APP_GOOGLE_CLIENT_ID is not set");
+    console.warn("REACT_APP_GOOGLE_CLIENT_ID is not set");
     return <LoginForm />;
   }
   return (

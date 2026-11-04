@@ -1,17 +1,11 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useEffect,
-} from "react";
+import { createContext, useContext, useState, useCallback, useEffect } from "react";
 import api, { setAccessToken } from "../api/axios";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);   // ✅ NEW — true until bootstrap finishes
+  const [loading, setLoading] = useState(true);
 
   const login = useCallback(async (email, password) => {
     const { data } = await api.post("/api/auth/login", { email, password });
@@ -48,6 +42,8 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setAccessToken(null);
       setUser(null);
+      // ✅ CLEAR THE FORM DRAFT ON LOGOUT
+      localStorage.removeItem("startup_form_draft");
     }
   }, []);
 
@@ -74,11 +70,10 @@ export const AuthProvider = ({ children }) => {
       setAccessToken(null);
       setUser(null);
     } finally {
-      setLoading(false);   // ✅ NEW
+      setLoading(false);
     }
   }, []);
 
-  // ✅ NEW — bootstrap on mount if App.jsx doesn't already call it
   useEffect(() => {
     bootstrap();
   }, [bootstrap]);

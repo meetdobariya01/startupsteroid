@@ -19,9 +19,9 @@ const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const refreshCookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
-  sameSite: "strict",
+  sameSite: "lax", // ✅ FIXED: Changed from "strict" to "lax"
   maxAge: 7 * 24 * 60 * 60 * 1000,
-  path: "/api/auth", // ✅ FIXED: Was "/api/auth/refresh"
+  path: "/api/auth",
 };
 
 // ─── Helpers ───
@@ -233,7 +233,6 @@ exports.logout = async (req, res) => {
     }
   } catch (_) {}
   
-  // ✅ FIXED: Path must match cookie options exactly
   res.clearCookie("refreshToken", { path: "/api/auth" });
   res.json({ message: "Logged out" });
 };
